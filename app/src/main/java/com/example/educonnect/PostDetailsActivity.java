@@ -47,33 +47,36 @@ public class PostDetailsActivity extends AppCompatActivity {
         submitProposalButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Dialog dialog = new Dialog(itemView.getContext());
-                dialog.setContentView(R.layout.layout_proposal_dialog);
-
-                // Dialog nu screen de center vich set karo
-                dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                dialog.getWindow().setGravity(Gravity.CENTER);
-
-                TextInputEditText proposalInput = dialog.findViewById(R.id.proposal_input);
-                TextInputEditText amountInput = dialog.findViewById(R.id.amount_input);
-                Button submitButton = dialog.findViewById(R.id.submit_proposal_dialog_button);
-
-                submitButton.setOnClickListener(v -> {
-                    String proposal = proposalInput.getText().toString();
-                    String amount = amountInput.getText().toString();
-
-                    if (proposal.isEmpty() || amount.isEmpty()) {
-                        Toast.makeText(itemView.getContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
-                    } else {
-                        // TODO: Implement proposal submission logic
-                        Toast.makeText(itemView.getContext(), "Proposal submitted", Toast.LENGTH_SHORT).show();
-                        dialog.dismiss();
-                    }
-                });
-
-                dialog.show();
+                showProposalDialog();
             }
-
         });
+    }
+
+    private void showProposalDialog() {
+        Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.layout_proposal_dialog);
+
+        // Set dialog to appear at the center of the screen
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setGravity(Gravity.CENTER);
+
+        TextInputEditText proposalInput = dialog.findViewById(R.id.proposal_input);
+        TextInputEditText amountInput = dialog.findViewById(R.id.amount_input);
+        Button submitButton = dialog.findViewById(R.id.submit_proposal_dialog_button);
+
+        submitButton.setOnClickListener(v -> {
+            String proposal = proposalInput.getText().toString();
+            String amount = amountInput.getText().toString();
+
+            if (proposal.isEmpty() || amount.isEmpty()) {
+                Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+            } else {
+                // TODO: Implement proposal submission logic
+                Toast.makeText(this, "Proposal submitted", Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
     }
 }
