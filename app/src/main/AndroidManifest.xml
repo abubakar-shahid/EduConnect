@@ -23,6 +23,7 @@
         <activity android:name=".ForgotPasswordActivity" />
         <activity android:name=".TutorDashboardActivity" />
         <activity android:name=".PostDetailsActivity" />
+        <activity android:name=".ProfileActivity" />
         
     </application>
 

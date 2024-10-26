@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -52,5 +53,17 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_profile:
+                Intent profileIntent = new Intent(this, ProfileActivity.class);
+                startActivity(profileIntent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }
