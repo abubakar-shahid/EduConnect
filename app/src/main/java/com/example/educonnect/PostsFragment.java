@@ -36,8 +36,8 @@ public class PostsFragment extends Fragment {
 
     private List<Post> getDummyPosts() {
         List<Post> posts = new ArrayList<>();
-        posts.add(new Post("Math Tutor Needed", "Algebra", "Need help with quadratic equations", "2023-05-01", "14:00", 25.0));
-        posts.add(new Post("Physics Help", "Mechanics", "Struggling with Newton's laws", "2023-05-02", "16:30", 30.0));
+        posts.add(new Post("Math Tutor Needed", "Algebra", "Need help with quadratic equations", "2023-05-01", "14:00", 25.0, 5));
+        posts.add(new Post("Physics Help", "Mechanics", "Struggling with Newton's laws", "2023-05-02", "16:30", 30.0, 7));
         // Add more dummy posts as needed
         return posts;
     }

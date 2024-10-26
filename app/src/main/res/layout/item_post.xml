@@ -14,21 +14,23 @@
 
         <TextView
             android:id="@+id/post_title"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <TextView
             android:id="@+id/post_subject"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:textStyle="italic"
             app:layout_constraintTop_toBottomOf="@id/post_title"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="4dp" />
 
         <TextView
@@ -45,7 +47,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/post_description"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             android:layout_marginTop="8dp" />
 
         <TextView
@@ -57,12 +59,21 @@
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginTop="8dp" />
 
+        <TextView
+            android:id="@+id/post_tokens"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="italic"
+            app:layout_constraintTop_toBottomOf="@id/post_amount"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="4dp" />
+
         <Button
             android:id="@+id/submit_proposal_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Submit Proposal"
-            app:layout_constraintTop_toBottomOf="@id/post_amount"
+            app:layout_constraintTop_toBottomOf="@id/post_tokens"
             app:layout_constraintStart_toStartOf="parent"
             android:layout_marginTop="8dp" />
 
