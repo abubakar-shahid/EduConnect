@@ -60,22 +60,22 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_menu, menu);
+        inflater.inflate(R.menu.tutor_dashboard_menu, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_profile:
+            if (item.getItemId() == R.id.action_profile) {
                 Intent profileIntent = new Intent(this, ProfileActivity.class);
                 startActivity(profileIntent);
                 return true;
-            case R.id.action_logout:
+            } else if (item.getItemId() == R.id.action_logout) {
                 // Handle logout
                 return true;
-            default:
+            }
+            else{
                 return super.onOptionsItemSelected(item);
-        }
+            }
     }
 }
