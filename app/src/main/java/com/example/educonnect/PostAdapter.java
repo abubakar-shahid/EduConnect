@@ -1,6 +1,7 @@
 package com.example.educonnect;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,6 +66,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             dateTimeTextView.setText(post.getDate() + " " + post.getTime());
             amountTextView.setText("$" + post.getAmount());
             tokensTextView.setText(post.getTokens() + " tokens required");
+
+            itemView.setOnClickListener(v -> {
+                Intent intent = new Intent(itemView.getContext(), PostDetailsActivity.class);
+                intent.putExtra("post", post);
+                itemView.getContext().startActivity(intent);
+            });
 
             proposalButton.setOnClickListener(v -> showProposalDialog());
         }
