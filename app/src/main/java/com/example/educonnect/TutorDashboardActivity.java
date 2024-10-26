@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,6 +15,8 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 public class TutorDashboardActivity extends AppCompatActivity {
+
+    private static final String TAG = "TutorDashboardActivity";
 
     private Toolbar toolbar;
     private TabLayout tabLayout;
@@ -34,12 +37,16 @@ public class TutorDashboardActivity extends AppCompatActivity {
     }
 
     private void setupViewPager() {
-        TutorDashboardPagerAdapter adapter = new TutorDashboardPagerAdapter(this);
-        viewPager.setAdapter(adapter);
+        try {
+            TutorDashboardPagerAdapter adapter = new TutorDashboardPagerAdapter(this);
+            viewPager.setAdapter(adapter);
 
-        new TabLayoutMediator(tabLayout, viewPager,
-                (tab, position) -> tab.setText(position == 0 ? "Posts" : "Chats")
-        ).attach();
+            new TabLayoutMediator(tabLayout, viewPager,
+                    (tab, position) -> tab.setText(position == 0 ? "Posts" : "Chats")
+            ).attach();
+        } catch (Exception e) {
+            Log.e(TAG, "Error setting up ViewPager", e);
+        }
     }
 
     @Override
