@@ -7,10 +7,9 @@
     app:cardCornerRadius="8dp"
     app:cardElevation="4dp">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:padding="16dp">
 
         <TextView
@@ -18,41 +17,55 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/post_subject"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16sp"
-            android:textStyle="italic" />
+            android:textStyle="italic"
+            app:layout_constraintTop_toBottomOf="@id/post_title"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="4dp" />
 
         <TextView
             android:id="@+id/post_description"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/post_subject"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="8dp" />
 
         <TextView
             android:id="@+id/post_date_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/post_description"
+            app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="8dp" />
 
         <TextView
             android:id="@+id/post_amount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/post_date_time"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="8dp" />
 
         <Button
             android:id="@+id/submit_proposal_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Submit Proposal" />
+            android:text="Submit Proposal"
+            app:layout_constraintTop_toBottomOf="@id/post_amount"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="8dp" />
 
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>
