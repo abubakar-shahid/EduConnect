@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.Gravity;
+import android.os.Build;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -68,8 +70,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         }
 
         private void showProposalDialog() {
-            Dialog dialog = new Dialog(itemView.getContext(), android.R.style.Theme_Light_NoTitleBar_Fullscreen);
+            Dialog dialog = new Dialog(itemView.getContext());
             dialog.setContentView(R.layout.layout_proposal_dialog);
+
+            // Dialog nu screen de center vich set karo
+            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            dialog.getWindow().setGravity(Gravity.CENTER);
 
             TextInputEditText proposalInput = dialog.findViewById(R.id.proposal_input);
             TextInputEditText amountInput = dialog.findViewById(R.id.amount_input);
