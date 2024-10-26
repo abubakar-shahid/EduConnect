@@ -18,7 +18,7 @@
     <string name="forgot_password_description">Enter your email address and we\'ll send you instructions to reset your password.</string>
     <string name="btn_reset_password">Reset Password</string>
     <string name="back_to_login">Back to Login</string>
-    <string name="tutor_dashboard_title">Tutor Dashboard</string>
+    <string name="tutor_dashboard_title">Dashboard</string>
     <string name="profile">Profile</string>
     <string name="logout">Logout</string>
 </resources>
