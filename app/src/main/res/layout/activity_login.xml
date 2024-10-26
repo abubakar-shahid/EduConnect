@@ -5,6 +5,19 @@
     android:layout_height="match_parent"
     android:background="@color/background">
 
+    <TextView
+        android:id="@+id/app_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="EduConnect"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:textColor="@color/primary_dark"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="32dp"/>
+
     <ImageView
         android:id="@+id/background_image"
         android:layout_width="0dp"
@@ -12,10 +25,11 @@
         android:src="@drawable/back_ground"
         android:scaleType="centerCrop"
         android:adjustViewBounds="true"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/app_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.4" />
+        app:layout_constraintHeight_percent="0.35"
+        android:layout_marginTop="16dp"/>
 
     <androidx.cardview.widget.CardView
         android:layout_width="0dp"
