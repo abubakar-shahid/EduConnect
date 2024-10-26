@@ -68,7 +68,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         }
 
         private void showProposalDialog() {
-            Dialog dialog = new Dialog(itemView.getContext());
+            Dialog dialog = new Dialog(itemView.getContext(), android.R.style.Theme_Light_NoTitleBar_Fullscreen);
             dialog.setContentView(R.layout.layout_proposal_dialog);
 
             TextInputEditText proposalInput = dialog.findViewById(R.id.proposal_input);
