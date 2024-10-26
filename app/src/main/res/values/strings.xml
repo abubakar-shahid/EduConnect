@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TutorConnect</string>
+    <string name="app_name">EduConnect</string>
     <string name="signup_title">Sign Up</string>
     <string name="login_title">Log In</string>
     <string name="forgot_password_title">Forgot Password</string>

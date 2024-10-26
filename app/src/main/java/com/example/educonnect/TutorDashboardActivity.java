@@ -24,15 +24,16 @@ public class TutorDashboardActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tutor_dashboard);
-
         toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+//        setSupportActionBar(toolbar);
+        Log.d(TAG, "Inside Dashboard java 4");
 
         tabLayout = findViewById(R.id.tab_layout);
         viewPager = findViewById(R.id.view_pager);
-
+        Log.d(TAG, "Inside Dashboard java last");
         setupViewPager();
     }
 
