@@ -7,14 +7,16 @@ public class Post {
     private String date;
     private String time;
     private double amount;
+    private int tokens;
 
-    public Post(String title, String subject, String description, String date, String time, double amount) {
+    public Post(String title, String subject, String description, String date, String time, double amount, int tokens) {
         this.title = title;
         this.subject = subject;
         this.description = description;
         this.date = date;
         this.time = time;
         this.amount = amount;
+        this.tokens = tokens;
     }
 
     // Add getters for all fields
@@ -24,4 +26,5 @@ public class Post {
     public String getDate() { return date; }
     public String getTime() { return time; }
     public double getAmount() { return amount; }
+    public int getTokens() { return tokens; }
 }

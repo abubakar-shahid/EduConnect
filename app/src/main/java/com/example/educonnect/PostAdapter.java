@@ -1,13 +1,17 @@
 package com.example.educonnect;
 
+import android.app.Dialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.List;
 
@@ -38,7 +42,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
     }
 
     class PostViewHolder extends RecyclerView.ViewHolder {
-        TextView titleTextView, subjectTextView, descriptionTextView, dateTimeTextView, amountTextView;
+        TextView titleTextView, subjectTextView, descriptionTextView, dateTimeTextView, amountTextView, tokensTextView;
         Button proposalButton;
 
         public PostViewHolder(@NonNull View itemView) {
@@ -48,6 +52,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             descriptionTextView = itemView.findViewById(R.id.post_description);
             dateTimeTextView = itemView.findViewById(R.id.post_date_time);
             amountTextView = itemView.findViewById(R.id.post_amount);
+            tokensTextView = itemView.findViewById(R.id.post_tokens);
             proposalButton = itemView.findViewById(R.id.submit_proposal_button);
         }
 
@@ -57,11 +62,33 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             descriptionTextView.setText(post.getDescription());
             dateTimeTextView.setText(post.getDate() + " " + post.getTime());
             amountTextView.setText("$" + post.getAmount());
+            tokensTextView.setText(post.getTokens() + " tokens required");
 
-            proposalButton.setOnClickListener(v -> {
-                // TODO: Implement proposal submission logic
-                // This should open a floating window for proposal submission
+            proposalButton.setOnClickListener(v -> showProposalDialog());
+        }
+
+        private void showProposalDialog() {
+            Dialog dialog = new Dialog(itemView.getContext());
+            dialog.setContentView(R.layout.layout_proposal_dialog);
+
+            TextInputEditText proposalInput = dialog.findViewById(R.id.proposal_input);
+            TextInputEditText amountInput = dialog.findViewById(R.id.amount_input);
+            Button submitButton = dialog.findViewById(R.id.submit_proposal_dialog_button);
+
+            submitButton.setOnClickListener(v -> {
+                String proposal = proposalInput.getText().toString();
+                String amount = amountInput.getText().toString();
+
+                if (proposal.isEmpty() || amount.isEmpty()) {
+                    Toast.makeText(itemView.getContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
+                } else {
+                    // TODO: Implement proposal submission logic
+                    Toast.makeText(itemView.getContext(), "Proposal submitted", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                }
             });
+
+            dialog.show();
         }
     }
 }
