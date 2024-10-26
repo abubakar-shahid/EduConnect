@@ -27,13 +27,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:counterEnabled="true"
-            app:counterMaxLength="150">
+            app:counterMaxLength="1500">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/proposal_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter your proposal (max 150 words)"
+                android:hint="Enter your proposal (max 1500 words)"
                 android:inputType="textMultiLine"
                 android:maxLines="5" />
 
