@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,10 +16,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        TextView signupLink = findViewById(R.id.signup_link);
+        Button signupLink = findViewById(R.id.signup_link);
         TextView forgotPasswordLink = findViewById(R.id.forgot_password_link);
         Button loginButton = findViewById(R.id.login_button);
 
+        assert signupLink != null;
         signupLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
