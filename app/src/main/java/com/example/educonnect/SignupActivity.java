@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,6 +18,7 @@ public class SignupActivity extends AppCompatActivity {
     private TextInputEditText confirmPasswordInput;
     private RadioGroup userTypeRadioGroup;
     private Button signupButton;
+    private TextView loginLink;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,11 +31,19 @@ public class SignupActivity extends AppCompatActivity {
         confirmPasswordInput = findViewById(R.id.confirm_password_input);
         userTypeRadioGroup = findViewById(R.id.user_type_radio_group);
         signupButton = findViewById(R.id.signup_button);
+        loginLink = findViewById(R.id.login_link);
 
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // TODO: Implement signup logic
+            }
+        });
+
+        loginLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish(); // This will close the SignupActivity and return to the previous activity (login page)
             }
         });
     }
