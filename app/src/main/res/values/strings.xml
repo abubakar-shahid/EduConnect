@@ -26,14 +26,20 @@
     <string name="city">City</string>
     <string name="edit">Edit</string>
     <string name="save">Save</string>
-    
+
     <string-array name="country_codes">
-        <item>+1</item>
-        <item>+44</item>
-        <item>+91</item>
+        <item>+1 (US)</item>
+        <item>+44 (UK)</item>
+        <item>+91 (IN)</item>
         <!-- Add more country codes as needed -->
     </string-array>
-    
+
+    <string-array name="experience_levels">
+        <item>Beginner</item>
+        <item>Intermediate</item>
+        <item>Advanced</item>
+    </string-array>
+
     <string-array name="countries">
         <item>United States</item>
         <item>United Kingdom</item>

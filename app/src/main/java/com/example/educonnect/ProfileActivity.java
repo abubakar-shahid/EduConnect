@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,54 +22,51 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        etFullName = findViewById(R.id.etFullName);
-        etPhoneNumber = findViewById(R.id.etPhoneNumber);
-        etCity = findViewById(R.id.etCity);
-        spinnerCountryCode = findViewById(R.id.spinnerCountryCode);
-        spinnerExperienceLevel = findViewById(R.id.spinnerExperienceLevel);
-        spinnerCountry = findViewById(R.id.spinnerCountry);
-        btnEditSave = findViewById(R.id.btnEditSave);
-
-        // Set up spinners
+        initViews();
         setupSpinners();
+        loadProfileData();
 
-        // Load user data
-        loadUserData();
-
-        btnEditSave.setOnClickListener(v -> {
-            if (isEditing) {
-                saveProfile();
-            } else {
-                enableEditing();
+        btnEditSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isEditing) {
+                    saveProfile();
+                } else {
+                    enableEditing();
+                }
             }
         });
     }
 
+    private void initViews() {
+        etFullName = findViewById(R.id.et_full_name);
+        etPhoneNumber = findViewById(R.id.et_phone_number);
+        etCity = findViewById(R.id.et_city);
+        spinnerCountryCode = findViewById(R.id.spinner_country_code);
+        spinnerExperienceLevel = findViewById(R.id.spinner_experience_level);
+        spinnerCountry = findViewById(R.id.spinner_country);
+        btnEditSave = findViewById(R.id.btn_edit_save);
+    }
+
     private void setupSpinners() {
-        // Set up country code spinner
-        ArrayAdapter<String> countryCodeAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item,
-                getResources().getStringArray(R.array.country_codes));
+        ArrayAdapter<CharSequence> countryCodeAdapter = ArrayAdapter.createFromResource(this,
+                R.array.country_codes, android.R.layout.simple_spinner_item);
         countryCodeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCountryCode.setAdapter(countryCodeAdapter);
 
-        // Set up experience level spinner
-        ArrayAdapter<String> experienceLevelAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item,
-                new String[]{"Beginner", "Intermediate", "Advanced"});
+        ArrayAdapter<CharSequence> experienceLevelAdapter = ArrayAdapter.createFromResource(this,
+                R.array.experience_levels, android.R.layout.simple_spinner_item);
         experienceLevelAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerExperienceLevel.setAdapter(experienceLevelAdapter);
 
-        // Set up country spinner
-        ArrayAdapter<String> countryAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item,
-                getResources().getStringArray(R.array.countries));
+        ArrayAdapter<CharSequence> countryAdapter = ArrayAdapter.createFromResource(this,
+                R.array.countries, android.R.layout.simple_spinner_item);
         countryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerCountry.setAdapter(countryAdapter);
     }
 
-    private void loadUserData() {
-        // TODO: Load user data from database or shared preferences
+    private void loadProfileData() {
+        // TODO: Load profile data from database or shared preferences
         // For now, we'll use dummy data
         etFullName.setText("John Doe");
         etPhoneNumber.setText("1234567890");
@@ -101,6 +97,6 @@ public class ProfileActivity extends AppCompatActivity {
         spinnerCountry.setEnabled(false);
         btnEditSave.setText(R.string.edit);
 
-        // TODO: Save user data to database or shared preferences
+        // TODO: Save profile data to database or shared preferences
     }
 }
