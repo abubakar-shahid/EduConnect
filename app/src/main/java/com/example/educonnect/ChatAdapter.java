@@ -36,7 +36,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         return chats.size();
     }
 
-    class ChatViewHolder extends RecyclerView.ViewHolder {
+    static class ChatViewHolder extends RecyclerView.ViewHolder {
         TextView nameTextView, lastMessageTextView, timeTextView;
 
         public ChatViewHolder(@NonNull View itemView) {
