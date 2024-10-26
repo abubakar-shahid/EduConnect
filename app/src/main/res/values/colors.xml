@@ -4,7 +4,7 @@
     <color name="primary_dark">#387F39</color>
     <color name="accent">#F9F1A5</color>
     <color name="background">#D4E2B6</color>
-    <color name="white">#FFFFFF</color>
-    <color name="black">#000000</color>
+    <color name="white">#000000</color>
+    <color name="black">#FFFFFF</color>
     <!-- Keep any other existing colors you need -->
 </resources>

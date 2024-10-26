@@ -1,6 +1,8 @@
 package com.example.educonnect;
 
-public class Post {
+import java.io.Serializable;
+
+public class Post implements Serializable {
     private String title;
     private String subject;
     private String description;
