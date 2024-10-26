@@ -55,8 +55,10 @@ public class TutorDashboardActivity extends AppCompatActivity {
             // TODO: Implement profile action
             return true;
         } else if (id == R.id.action_logout) {
-            // TODO: Implement logout action
-            startActivity(new Intent(this, MainActivity.class));
+            // Implement logout action
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
             finish();
             return true;
         }

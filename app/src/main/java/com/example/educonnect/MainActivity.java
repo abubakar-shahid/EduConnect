@@ -15,28 +15,33 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        Button signupLink = findViewById(R.id.signup_link);
-        TextView forgotPasswordLink = findViewById(R.id.forgot_password_link);
         Button loginButton = findViewById(R.id.login_button);
+        TextView signupLink = findViewById(R.id.signup_link);
+        TextView forgotPasswordLink = findViewById(R.id.forgot_password_link);
+
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: Implement actual login logic
+                // For now, we'll just navigate to the TutorDashboardActivity
+                Intent intent = new Intent(MainActivity.this, TutorDashboardActivity.class);
+                startActivity(intent);
+            }
+        });
 
         signupLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, SignupActivity.class));
+                Intent intent = new Intent(MainActivity.this, SignupActivity.class);
+                startActivity(intent);
             }
         });
 
         forgotPasswordLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, ForgotPasswordActivity.class));
-            }
-        });
-
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO: Implement login logic
+                Intent intent = new Intent(MainActivity.this, ForgotPasswordActivity.class);
+                startActivity(intent);
             }
         });
     }
