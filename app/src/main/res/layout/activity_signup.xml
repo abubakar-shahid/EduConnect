@@ -30,6 +30,7 @@
             app:boxBackgroundColor="@color/white">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/full_name_input"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/input_height"
                 android:hint="@string/hint_full_name"
@@ -45,6 +46,7 @@
             app:boxBackgroundColor="@color/white">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/email_input"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/input_height"
                 android:hint="@string/hint_email"
@@ -61,6 +63,7 @@
             app:passwordToggleEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/password_input"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/input_height"
                 android:hint="@string/hint_password"
@@ -77,6 +80,7 @@
             app:passwordToggleEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/confirm_password_input"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/input_height"
                 android:hint="@string/hint_confirm_password"
@@ -93,6 +97,7 @@
             android:textSize="@dimen/text_size_input" />
 
         <RadioGroup
+            android:id="@+id/user_type_radio_group"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/padding_medium"
@@ -115,6 +120,7 @@
         </RadioGroup>
 
         <Button
+            android:id="@+id/signup_button"
             android:layout_width="match_parent"
             android:layout_height="@dimen/button_height"
             android:layout_marginBottom="@dimen/padding_medium"
