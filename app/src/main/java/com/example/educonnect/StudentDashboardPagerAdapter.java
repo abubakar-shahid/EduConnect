@@ -1,0 +1,28 @@
+package com.example.educonnect;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+
+public class StudentDashboardPagerAdapter extends FragmentStateAdapter {
+
+    public StudentDashboardPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
+        super(fragmentActivity);
+    }
+
+    @NonNull
+    @Override
+    public Fragment createFragment(int position) {
+        if (position == 0) {
+            return new PostsFragment();
+        } else {
+            return new ChatsFragment();
+        }
+    }
+
+    @Override
+    public int getItemCount() {
+        return 2; // We have two tabs
+    }
+}

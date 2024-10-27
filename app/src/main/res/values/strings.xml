@@ -19,6 +19,7 @@
     <string name="btn_reset_password">Reset Password</string>
     <string name="back_to_login">Back to Login</string>
     <string name="tutor_dashboard_title">Tutor Dashboard</string>
+    <string name="student_dashboard_title">Student Dashboard</string>
     <string name="profile">Profile</string>
     <string name="logout">Logout</string>
     <string name="full_name">Full Name</string>

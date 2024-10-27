@@ -24,6 +24,8 @@
         <activity android:name=".TutorDashboardActivity" />
         <activity android:name=".PostDetailsActivity" />
         <activity android:name=".ProfileActivity" />
+        <activity android:name=".StudentDashboardActivity" />
+        <activity android:name=".AddPostActivity" />
         
     </application>
 

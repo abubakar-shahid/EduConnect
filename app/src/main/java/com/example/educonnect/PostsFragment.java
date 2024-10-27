@@ -1,5 +1,6 @@
 package com.example.educonnect;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +19,7 @@ public class PostsFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private PostAdapter postAdapter;
+    private FloatingActionButton fabAddPost;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -25,10 +29,16 @@ public class PostsFragment extends Fragment {
         recyclerView = view.findViewById(R.id.posts_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        fabAddPost = view.findViewById(R.id.fab_add_post);
+        fabAddPost.setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(), AddPostActivity.class);
+            startActivity(intent);
+        });
+
         // TODO: Replace with actual data fetching
         List<Post> posts = getDummyPosts();
 
-        postAdapter = new PostAdapter(posts);
+        postAdapter = new PostAdapter(posts, getActivity() instanceof StudentDashboardActivity);
         recyclerView.setAdapter(postAdapter);
 
         return view;

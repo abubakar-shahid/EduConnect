@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.view.Gravity;
-import android.os.Build;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,9 +20,11 @@ import java.util.List;
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
 
     private List<Post> posts;
+    private boolean isStudent;
 
-    public PostAdapter(List<Post> posts) {
+    public PostAdapter(List<Post> posts, boolean isStudent) {
         this.posts = posts;
+        this.isStudent = isStudent;
     }
 
     @NonNull
@@ -46,7 +47,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
     class PostViewHolder extends RecyclerView.ViewHolder {
         TextView titleTextView, subjectTextView, descriptionTextView, dateTimeTextView, amountTextView, tokensTextView;
-        Button proposalButton;
+        Button actionButton;
 
         public PostViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -56,7 +57,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             dateTimeTextView = itemView.findViewById(R.id.post_date_time);
             amountTextView = itemView.findViewById(R.id.post_amount);
             tokensTextView = itemView.findViewById(R.id.post_tokens);
-            proposalButton = itemView.findViewById(R.id.submit_proposal_button);
+            actionButton = itemView.findViewById(R.id.post_action_button);
         }
 
         public void bind(Post post) {
@@ -66,6 +67,17 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             dateTimeTextView.setText(post.getDate() + " " + post.getTime());
             amountTextView.setText("$" + post.getAmount());
             tokensTextView.setText(post.getTokens() + " tokens required");
+
+            if (isStudent) {
+                actionButton.setText("Edit");
+                actionButton.setOnClickListener(v -> {
+                    // TODO: Implement edit post functionality
+                    Toast.makeText(itemView.getContext(), "Edit post", Toast.LENGTH_SHORT).show();
+                });
+            } else {
+                actionButton.setText("Submit Proposal");
+                actionButton.setOnClickListener(v -> showProposalDialog());
+            }
 
             itemView.setOnClickListener(v -> {
                 Intent intent = new Intent(itemView.getContext(), PostDetailsActivity.class);
@@ -77,15 +89,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                 intent.putExtra("tokens", post.getTokens());
                 itemView.getContext().startActivity(intent);
             });
-
-            proposalButton.setOnClickListener(v -> showProposalDialog());
         }
 
         private void showProposalDialog() {
             Dialog dialog = new Dialog(itemView.getContext());
             dialog.setContentView(R.layout.layout_proposal_dialog);
 
-            // Dialog nu screen de center vich set karo
             dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             dialog.getWindow().setGravity(Gravity.CENTER);
 
