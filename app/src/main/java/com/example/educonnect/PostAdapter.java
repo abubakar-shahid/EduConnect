@@ -71,11 +71,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             if (isStudent) {
                 actionButton.setText("More...");
                 actionButton.setOnClickListener(v -> {
-                    Intent intent = new Intent(itemView.getContext(), PostDetailsActivity.class);
+                    Intent intent = new Intent(itemView.getContext(), EditPostActivity.class);
                     intent.putExtra("title", post.getTitle());
                     intent.putExtra("subject", post.getSubject());
                     intent.putExtra("description", post.getDescription());
-                    intent.putExtra("dateTime", post.getDate() + " " + post.getTime());
                     intent.putExtra("amount", post.getAmount());
                     intent.putExtra("tokens", post.getTokens());
                     itemView.getContext().startActivity(intent);

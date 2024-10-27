@@ -26,6 +26,8 @@
         <activity android:name=".ProfileActivity" />
         <activity android:name=".StudentDashboardActivity" />
         <activity android:name=".AddPostActivity" />
+        <activity android:name=".EditPostActivity"
+            android:windowSoftInputMode="adjustResize" />
         
     </application>
 
