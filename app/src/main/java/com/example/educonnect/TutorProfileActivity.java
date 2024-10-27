@@ -19,10 +19,10 @@ import com.google.android.material.textfield.TextInputLayout;
 public class TutorProfileActivity extends AppCompatActivity {
 
     private TextInputEditText etFullName, etEmail, etPassword, etPhoneNumber, etCity;
-    private AutoCompleteTextView spinnerCountryCode, spinnerExpertise, spinnerCountry;
+    private TextInputEditText etExpertise1, etExpertise2, etExpertise3; // New fields
+    private AutoCompleteTextView spinnerCountryCode, spinnerCountry;
     private Button btnEditSave;
     private boolean isEditing = false;
-    private EditText editTextExpertise1, editTextExpertise2, editTextExpertise3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,25 +32,6 @@ public class TutorProfileActivity extends AppCompatActivity {
         initViews();
         setupSpinners();
         loadProfileData();
-
-        // Initialize EditText fields
-        editTextExpertise1 = findViewById(R.id.editTextExpertise1);
-        editTextExpertise2 = findViewById(R.id.editTextExpertise2);
-        editTextExpertise3 = findViewById(R.id.editTextExpertise3);
-
-        // Load existing expertise data (dummy implementation)
-        loadExpertiseData();
-
-        // Save button click listener (dummy implementation)
-        Button saveButton = findViewById(R.id.btn_edit_save);
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(saveButton.getText().toString().equals("SAVE")){
-                    saveExpertiseData();
-                }
-            }
-        });
 
         btnEditSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,8 +51,10 @@ public class TutorProfileActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.et_password);
         etPhoneNumber = findViewById(R.id.et_phone_number);
         etCity = findViewById(R.id.et_city);
+        etExpertise1 = findViewById(R.id.et_expertise1); // New
+        etExpertise2 = findViewById(R.id.et_expertise2); // New
+        etExpertise3 = findViewById(R.id.et_expertise3); // New
         spinnerCountryCode = findViewById(R.id.spinner_country_code);
-        spinnerExpertise = findViewById(R.id.spinner_expertise);
         spinnerCountry = findViewById(R.id.spinner_country);
         btnEditSave = findViewById(R.id.btn_edit_save);
     }
@@ -80,10 +63,6 @@ public class TutorProfileActivity extends AppCompatActivity {
         ArrayAdapter<CharSequence> countryCodeAdapter = ArrayAdapter.createFromResource(this,
                 R.array.country_codes, android.R.layout.simple_dropdown_item_1line);
         spinnerCountryCode.setAdapter(countryCodeAdapter);
-
-        ArrayAdapter<CharSequence> expertiseAdapter = ArrayAdapter.createFromResource(this,
-                R.array.expertise_areas, android.R.layout.simple_dropdown_item_1line);
-        spinnerExpertise.setAdapter(expertiseAdapter);
 
         ArrayAdapter<CharSequence> countryAdapter = ArrayAdapter.createFromResource(this,
                 R.array.countries, android.R.layout.simple_dropdown_item_1line);
@@ -98,8 +77,10 @@ public class TutorProfileActivity extends AppCompatActivity {
         etPassword.setText("********");
         etPhoneNumber.setText("1234567890");
         etCity.setText("New York");
+        etExpertise1.setText("Mathematics"); // New
+        etExpertise2.setText("Physics"); // New
+        etExpertise3.setText("Computer Science"); // New
         spinnerCountryCode.setText(spinnerCountryCode.getAdapter().getItem(0).toString(), false);
-        spinnerExpertise.setText(spinnerExpertise.getAdapter().getItem(1).toString(), false);
         spinnerCountry.setText(spinnerCountry.getAdapter().getItem(0).toString(), false);
     }
 
@@ -115,7 +96,7 @@ public class TutorProfileActivity extends AppCompatActivity {
     private void changeEditableBackgroundTint(int color) {
         View[] editableViews = {
             etFullName, etEmail, etPassword, etPhoneNumber, etCity,
-            spinnerCountryCode, spinnerExpertise, spinnerCountry
+            spinnerCountryCode, spinnerCountry
         };
 
         for (View view : editableViews) {
@@ -142,28 +123,12 @@ public class TutorProfileActivity extends AppCompatActivity {
         etPassword.setEnabled(enabled);
         etPhoneNumber.setEnabled(enabled);
         etCity.setEnabled(enabled);
+        etExpertise1.setEnabled(enabled); // New
+        etExpertise2.setEnabled(enabled); // New
+        etExpertise3.setEnabled(enabled); // New
         spinnerCountryCode.setEnabled(enabled);
-        spinnerExpertise.setEnabled(enabled);
         spinnerCountry.setEnabled(enabled);
     }
 
-    private void loadExpertiseData() {
-        // Dummy implementation to load existing expertise data
-        // In a real app, you would fetch this data from a database or server
-        editTextExpertise1.setText("Mathematics");
-        editTextExpertise2.setText("Physics");
-        editTextExpertise3.setText("Computer Science");
-    }
-
-    private void saveExpertiseData() {
-        // Dummy implementation to save expertise data
-        // In a real app, you would save this data to a database or server
-        String expertise1 = editTextExpertise1.getText().toString();
-        String expertise2 = editTextExpertise2.getText().toString();
-        String expertise3 = editTextExpertise3.getText().toString();
-
-        // For demonstration purposes, we'll just show a toast with the entered expertise
-        String message = "Expertise saved:\n1. " + expertise1 + "\n2. " + expertise2 + "\n3. " + expertise3;
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-    }
+    // Other methods remain the same
 }

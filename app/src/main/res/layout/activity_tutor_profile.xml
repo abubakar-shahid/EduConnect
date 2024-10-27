@@ -121,20 +121,54 @@
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
-            <!-- Expertise -->
+            <!-- Expertise 1 -->
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/til_expertise"
+                android:id="@+id/til_expertise1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/padding_medium"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-                <AutoCompleteTextView
-                    android:id="@+id/spinner_expertise"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_expertise1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Expertise"
-                    android:inputType="none"
+                    android:hint="Expertise 1"
+                    android:inputType="text"
+                    android:enabled="false"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Expertise 2 -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_expertise2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/padding_medium"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_expertise2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Expertise 2"
+                    android:inputType="text"
+                    android:enabled="false"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Expertise 3 -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_expertise3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/padding_medium"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_expertise3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Expertise 3"
+                    android:inputType="text"
                     android:enabled="false"/>
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -172,30 +206,6 @@
                     android:inputType="textPostalAddress"
                     android:enabled="false"/>
             </com.google.android.material.textfield.TextInputLayout>
-
-            <EditText
-                android:id="@+id/editTextExpertise1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Expertise 1"
-                android:inputType="text"
-                android:layout_marginTop="8dp"/>
-
-            <EditText
-                android:id="@+id/editTextExpertise2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Expertise 2"
-                android:inputType="text"
-                android:layout_marginTop="8dp"/>
-
-            <EditText
-                android:id="@+id/editTextExpertise3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Expertise 3"
-                android:inputType="text"
-                android:layout_marginTop="8dp"/>
 
             <Button
                 android:id="@+id/btn_edit_save"
