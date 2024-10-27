@@ -1,5 +1,6 @@
 package com.example.educonnect;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,8 +29,7 @@ public class ChatsFragment extends Fragment {
         // TODO: Replace with actual data fetching
         List<Chat> chats = getDummyChats();
 
-        chatAdapter = new ChatAdapter(chats);
-        recyclerView.setAdapter(chatAdapter);
+        setupRecyclerView(chats);
 
         return view;
     }
@@ -40,5 +40,17 @@ public class ChatsFragment extends Fragment {
         chats.add(new Chat("Jane Smith", "Thanks for the physics lesson!", "Yesterday"));
         // Add more dummy chats as needed
         return chats;
+    }
+
+    private void setupRecyclerView(List<Chat> chats) {
+        chatAdapter = new ChatAdapter(chats, new ChatAdapter.OnChatClickListener() {
+            @Override
+            public void onChatClick(Chat chat) {
+                Intent intent = new Intent(getActivity(), ChatActivity.class);
+                intent.putExtra("chat_partner_name", chat.getName());
+                startActivity(intent);
+            }
+        });
+        recyclerView.setAdapter(chatAdapter);
     }
 }

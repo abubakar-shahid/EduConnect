@@ -13,9 +13,11 @@ import java.util.List;
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder> {
 
     private List<Chat> chats;
+    private OnChatClickListener listener;
 
-    public ChatAdapter(List<Chat> chats) {
+    public ChatAdapter(List<Chat> chats, OnChatClickListener listener) {
         this.chats = chats;
+        this.listener = listener;
     }
 
     @NonNull
@@ -36,7 +38,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         return chats.size();
     }
 
-    static class ChatViewHolder extends RecyclerView.ViewHolder {
+    public interface OnChatClickListener {
+        void onChatClick(Chat chat);
+    }
+
+    class ChatViewHolder extends RecyclerView.ViewHolder {
         TextView nameTextView, lastMessageTextView, timeTextView;
 
         public ChatViewHolder(@NonNull View itemView) {
@@ -44,6 +50,16 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             nameTextView = itemView.findViewById(R.id.chat_name);
             lastMessageTextView = itemView.findViewById(R.id.chat_last_message);
             timeTextView = itemView.findViewById(R.id.chat_time);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION && ChatAdapter.this.listener != null) {
+                        ChatAdapter.this.listener.onChatClick(ChatAdapter.this.chats.get(position));
+                    }
+                }
+            });
         }
 
         public void bind(Chat chat) {
