@@ -27,6 +27,9 @@
     <string name="city">City</string>
     <string name="edit">Edit</string>
     <string name="save">Save</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="institute">Institute</string>
 
     <string-array name="country_codes">
         <item>+1 (US)</item>
@@ -46,5 +49,26 @@
         <item>United Kingdom</item>
         <item>India</item>
         <!-- Add more countries as needed -->
+    </string-array>
+
+    <string-array name="education_categories">
+        <item>Primary School</item>
+        <item>Middle School</item>
+        <item>High School</item>
+        <item>Undergraduate</item>
+        <item>Master</item>
+        <item>PhD</item>
+    </string-array>
+
+    <string-array name="expertise_areas">
+        <item>Mathematics</item>
+        <item>Physics</item>
+        <item>Chemistry</item>
+        <item>Biology</item>
+        <item>Computer Science</item>
+        <item>Literature</item>
+        <item>History</item>
+        <item>Geography</item>
+        <!-- Add more areas as needed -->
     </string-array>
 </resources>

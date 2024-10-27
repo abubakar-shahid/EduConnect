@@ -31,8 +31,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 try {
                     Log.d(TAG, "Login button clicked");
-//                    Intent intent = new Intent(MainActivity.this, TutorDashboardActivity.class);
-                    Intent intent = new Intent(MainActivity.this, StudentDashboardActivity.class);
+                    Intent intent = new Intent(MainActivity.this, TutorDashboardActivity.class);
+//                    Intent intent = new Intent(MainActivity.this, StudentDashboardActivity.class);
                     startActivity(intent);
                 } catch (Exception e) {
                     Log.e(TAG, "Error starting TutorDashboardActivity", e);

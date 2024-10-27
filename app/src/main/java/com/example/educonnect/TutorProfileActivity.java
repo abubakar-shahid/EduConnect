@@ -11,17 +11,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-public class ProfileActivity extends AppCompatActivity {
+public class TutorProfileActivity extends AppCompatActivity {
 
-    private TextInputEditText etFullName, etEmail, etPassword, etPhoneNumber, etInstitute, etCity;
-    private AutoCompleteTextView spinnerCountryCode, spinnerCategory, spinnerCountry;
+    private TextInputEditText etFullName, etEmail, etPassword, etPhoneNumber, etCity;
+    private AutoCompleteTextView spinnerCountryCode, spinnerExpertise, spinnerCountry;
     private Button btnEditSave;
     private boolean isEditing = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        setContentView(R.layout.activity_tutor_profile);
 
         initViews();
         setupSpinners();
@@ -44,10 +44,9 @@ public class ProfileActivity extends AppCompatActivity {
         etEmail = findViewById(R.id.et_email);
         etPassword = findViewById(R.id.et_password);
         etPhoneNumber = findViewById(R.id.et_phone_number);
-        etInstitute = findViewById(R.id.et_institute);
         etCity = findViewById(R.id.et_city);
         spinnerCountryCode = findViewById(R.id.spinner_country_code);
-        spinnerCategory = findViewById(R.id.spinner_category);
+        spinnerExpertise = findViewById(R.id.spinner_expertise);
         spinnerCountry = findViewById(R.id.spinner_country);
         btnEditSave = findViewById(R.id.btn_edit_save);
     }
@@ -57,9 +56,9 @@ public class ProfileActivity extends AppCompatActivity {
                 R.array.country_codes, android.R.layout.simple_dropdown_item_1line);
         spinnerCountryCode.setAdapter(countryCodeAdapter);
 
-        ArrayAdapter<CharSequence> categoryAdapter = ArrayAdapter.createFromResource(this,
-                R.array.education_categories, android.R.layout.simple_dropdown_item_1line);
-        spinnerCategory.setAdapter(categoryAdapter);
+        ArrayAdapter<CharSequence> expertiseAdapter = ArrayAdapter.createFromResource(this,
+                R.array.expertise_areas, android.R.layout.simple_dropdown_item_1line);
+        spinnerExpertise.setAdapter(expertiseAdapter);
 
         ArrayAdapter<CharSequence> countryAdapter = ArrayAdapter.createFromResource(this,
                 R.array.countries, android.R.layout.simple_dropdown_item_1line);
@@ -73,10 +72,9 @@ public class ProfileActivity extends AppCompatActivity {
         etEmail.setText("johndoe@example.com");
         etPassword.setText("********");
         etPhoneNumber.setText("1234567890");
-        etInstitute.setText("Example University");
         etCity.setText("New York");
         spinnerCountryCode.setText(spinnerCountryCode.getAdapter().getItem(0).toString(), false);
-        spinnerCategory.setText(spinnerCategory.getAdapter().getItem(1).toString(), false);
+        spinnerExpertise.setText(spinnerExpertise.getAdapter().getItem(1).toString(), false);
         spinnerCountry.setText(spinnerCountry.getAdapter().getItem(0).toString(), false);
     }
 
@@ -91,8 +89,8 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void changeEditableBackgroundTint(int color) {
         View[] editableViews = {
-            etFullName, etEmail, etPassword, etPhoneNumber, etInstitute, etCity,
-            spinnerCountryCode, spinnerCategory, spinnerCountry
+            etFullName, etEmail, etPassword, etPhoneNumber, etCity,
+            spinnerCountryCode, spinnerExpertise, spinnerCountry
         };
 
         for (View view : editableViews) {
@@ -118,10 +116,9 @@ public class ProfileActivity extends AppCompatActivity {
         etEmail.setEnabled(enabled);
         etPassword.setEnabled(enabled);
         etPhoneNumber.setEnabled(enabled);
-        etInstitute.setEnabled(enabled);
         etCity.setEnabled(enabled);
         spinnerCountryCode.setEnabled(enabled);
-        spinnerCategory.setEnabled(enabled);
+        spinnerExpertise.setEnabled(enabled);
         spinnerCountry.setEnabled(enabled);
     }
 }
