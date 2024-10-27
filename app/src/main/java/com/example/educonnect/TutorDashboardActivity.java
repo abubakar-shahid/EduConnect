@@ -24,17 +24,20 @@ public class TutorDashboardActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tutor_dashboard);
+        
         toolbar = findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
-        Log.d(TAG, "Inside Dashboard java 4");
 
         tabLayout = findViewById(R.id.tab_layout);
         viewPager = findViewById(R.id.view_pager);
-        Log.d(TAG, "Inside Dashboard java last");
+        
         setupViewPager();
+
+        if (getIntent().getBooleanExtra("open_chats_tab", false)) {
+            viewPager.setCurrentItem(1); // Switch to Chats tab
+        }
     }
 
     private void setupViewPager() {
@@ -64,7 +67,6 @@ public class TutorDashboardActivity extends AppCompatActivity {
             startActivity(intent);
             return true;
         } else if (id == R.id.action_logout) {
-            // Implement logout action
             Intent intent = new Intent(this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);

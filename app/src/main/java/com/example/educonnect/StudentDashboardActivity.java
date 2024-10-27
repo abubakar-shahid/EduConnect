@@ -26,11 +26,14 @@ public class StudentDashboardActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_dashboard);
 
-
         tabLayout = findViewById(R.id.tab_layout);
         viewPager = findViewById(R.id.view_pager);
         
         setupViewPager();
+
+        if (getIntent().getBooleanExtra("open_chats_tab", false)) {
+            viewPager.setCurrentItem(1); // Switch to Chats tab
+        }
     }
 
     private void setupViewPager() {

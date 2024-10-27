@@ -83,7 +83,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                 actionButton.setText("Submit Proposal");
                 actionButton.setOnClickListener(v -> showProposalDialog());
             }
-
         }
 
         private void showProposalDialog() {

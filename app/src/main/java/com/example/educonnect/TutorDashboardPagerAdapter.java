@@ -14,7 +14,6 @@ public class TutorDashboardPagerAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        // Return the appropriate fragment for each tab
         if (position == 0) {
             return new PostsFragment();
         } else {
@@ -24,6 +23,6 @@ public class TutorDashboardPagerAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return 2; // We have two tabs
+        return 2; // We have two tabs: Posts and Chats
     }
 }

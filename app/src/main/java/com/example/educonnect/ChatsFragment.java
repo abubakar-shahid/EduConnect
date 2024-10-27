@@ -48,6 +48,7 @@ public class ChatsFragment extends Fragment {
             public void onChatClick(Chat chat) {
                 Intent intent = new Intent(getActivity(), ChatActivity.class);
                 intent.putExtra("chat_partner_name", chat.getName());
+                intent.putExtra("is_student", getActivity() instanceof StudentDashboardActivity);
                 startActivity(intent);
             }
         });

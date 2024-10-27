@@ -1,6 +1,8 @@
 package com.example.educonnect;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,6 +23,7 @@ public class ChatActivity extends AppCompatActivity {
     private EditText editTextChatbox;
     private Button buttonChatboxSend;
     private String chatPartnerName;
+    private boolean isStudent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +31,7 @@ public class ChatActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chat);
 
         chatPartnerName = getIntent().getStringExtra("chat_partner_name");
+        isStudent = getIntent().getBooleanExtra("is_student", true);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
@@ -59,6 +63,29 @@ public class ChatActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent;
+        if (isStudent) {
+            intent = new Intent(this, StudentDashboardActivity.class);
+        } else {
+            intent = new Intent(this, TutorDashboardActivity.class);
+        }
+        intent.putExtra("open_chats_tab", true);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
+        finish();
     }
 
     private void loadMessages() {
