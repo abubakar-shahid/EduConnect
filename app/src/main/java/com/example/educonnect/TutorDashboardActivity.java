@@ -60,7 +60,8 @@ public class TutorDashboardActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_profile) {
-            startActivity(profileIntent);
+            Intent intent = new Intent(this, ProfileActivity.class);
+            startActivity(intent);
             return true;
         } else if (id == R.id.action_logout) {
             // Implement logout action

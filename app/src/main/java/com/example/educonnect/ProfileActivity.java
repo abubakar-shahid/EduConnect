@@ -1,5 +1,6 @@
 package com.example.educonnect;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -38,6 +39,7 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
+    @SuppressLint("WrongViewCast")
     private void initViews() {
         etFullName = findViewById(R.id.et_full_name);
         etPhoneNumber = findViewById(R.id.et_phone_number);
@@ -45,7 +47,7 @@ public class ProfileActivity extends AppCompatActivity {
         spinnerCountryCode = findViewById(R.id.spinner_country_code);
         spinnerExperienceLevel = findViewById(R.id.spinner_experience_level);
         spinnerCountry = findViewById(R.id.spinner_country);
-        btnEditSave = findViewById(R.id.btn_edit_save);
+//        btnEditSave = findViewById(R.id.btn_edit_save);
     }
 
     private void setupSpinners() {
