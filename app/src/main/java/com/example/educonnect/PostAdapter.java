@@ -69,26 +69,22 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             tokensTextView.setText(post.getTokens() + " tokens required");
 
             if (isStudent) {
-                actionButton.setText("Edit");
+                actionButton.setText("More...");
                 actionButton.setOnClickListener(v -> {
-                    // TODO: Implement edit post functionality
-                    Toast.makeText(itemView.getContext(), "Edit post", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(itemView.getContext(), PostDetailsActivity.class);
+                    intent.putExtra("title", post.getTitle());
+                    intent.putExtra("subject", post.getSubject());
+                    intent.putExtra("description", post.getDescription());
+                    intent.putExtra("dateTime", post.getDate() + " " + post.getTime());
+                    intent.putExtra("amount", post.getAmount());
+                    intent.putExtra("tokens", post.getTokens());
+                    itemView.getContext().startActivity(intent);
                 });
             } else {
                 actionButton.setText("Submit Proposal");
                 actionButton.setOnClickListener(v -> showProposalDialog());
             }
-
-            itemView.setOnClickListener(v -> {
-                Intent intent = new Intent(itemView.getContext(), PostDetailsActivity.class);
-                intent.putExtra("title", post.getTitle());
-                intent.putExtra("subject", post.getSubject());
-                intent.putExtra("description", post.getDescription());
-                intent.putExtra("dateTime", post.getDate() + " " + post.getTime());
-                intent.putExtra("amount", post.getAmount());
-                intent.putExtra("tokens", post.getTokens());
-                itemView.getContext().startActivity(intent);
-            });
+            
         }
 
         private void showProposalDialog() {
