@@ -14,7 +14,7 @@
             android:textColor="@color/white"
             android:textSize="@dimen/text_size_title"
             android:padding="@dimen/padding_medium"
-            android:text="Tutor Profile"/>
+            android:text="@string/tutor_profile_heading"/>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView

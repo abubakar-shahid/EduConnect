@@ -30,6 +30,8 @@
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="institute">Institute</string>
+    <string name="tutor_profile_heading">My Profile</string>
+    <string name="student_profile_heading">My Profile</string>
 
     <string-array name="country_codes">
         <item>+1 (US)</item>
