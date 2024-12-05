@@ -14,6 +14,8 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class TutorDashboardActivity extends AppCompatActivity {
 
     private static final String TAG = "TutorDashboardActivity";
@@ -21,12 +23,16 @@ public class TutorDashboardActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager2 viewPager;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tutor_dashboard);
         
+        // Initialize Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
+
         toolbar = findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
 
@@ -67,6 +73,10 @@ public class TutorDashboardActivity extends AppCompatActivity {
             startActivity(intent);
             return true;
         } else if (id == R.id.action_logout) {
+            // Sign out from Firebase
+            mAuth.signOut();
+            
+            // Redirect to login screen
             Intent intent = new Intent(this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
