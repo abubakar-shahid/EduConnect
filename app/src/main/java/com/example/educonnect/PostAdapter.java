@@ -75,9 +75,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             tokensTextView.setText(post.getTokens() + " tokens required");
 
             if (isStudent) {
-                actionButton.setText("More...");
+                actionButton.setText("Edit");
                 actionButton.setOnClickListener(v -> {
                     Intent intent = new Intent(itemView.getContext(), EditPostActivity.class);
+                    intent.putExtra("post_id", post.getPostId());
                     intent.putExtra("title", post.getTitle());
                     intent.putExtra("subject", post.getSubject());
                     intent.putExtra("description", post.getDescription());

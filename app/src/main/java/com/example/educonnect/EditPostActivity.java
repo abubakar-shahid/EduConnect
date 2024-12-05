@@ -1,24 +1,40 @@
 package com.example.educonnect;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class EditPostActivity extends AppCompatActivity {
 
+    private static final String TAG = "EditPostActivity";
     private TextInputEditText etTitle, etSubject, etDescription, etAmount, etTokens;
     private Button btnEditSave;
     private boolean isEditing = false;
+
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
+    private String postId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_post);
+
+        // Initialize Firebase
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         initViews();
         loadPostData();
@@ -42,6 +58,9 @@ public class EditPostActivity extends AppCompatActivity {
         etAmount = findViewById(R.id.et_post_amount);
         etTokens = findViewById(R.id.et_post_tokens);
         btnEditSave = findViewById(R.id.btn_edit_save);
+
+        // Get post ID from intent
+        postId = getIntent().getStringExtra("post_id");
     }
 
     private void loadPostData() {
@@ -73,14 +92,85 @@ public class EditPostActivity extends AppCompatActivity {
     }
 
     private void savePost() {
-        isEditing = false;
-        setFieldsEnabled(false);
-        btnEditSave.setText(R.string.edit);
+        if (!validateInputs()) {
+            return;
+        }
 
-        int defaultBackgroundColor = getResources().getColor(android.R.color.transparent, getTheme());
-        changeEditableBackgroundTint(defaultBackgroundColor);
+        // Disable button while saving
+        btnEditSave.setEnabled(false);
 
-        // TODO: Save updated post data
+        // Get updated values
+        String title = etTitle.getText().toString().trim();
+        String subject = etSubject.getText().toString().trim();
+        String description = etDescription.getText().toString().trim();
+        double amount;
+        int tokens;
+
+        try {
+            amount = Double.parseDouble(etAmount.getText().toString().trim());
+            tokens = Integer.parseInt(etTokens.getText().toString().trim());
+        } catch (NumberFormatException e) {
+            Toast.makeText(this, "Please enter valid amount and tokens", Toast.LENGTH_SHORT).show();
+            btnEditSave.setEnabled(true);
+            return;
+        }
+
+        // Create update data
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("title", title);
+        updates.put("subject", subject);
+        updates.put("description", description);
+        updates.put("amount", amount);
+        updates.put("tokens", tokens);
+        updates.put("updatedAt", java.util.Calendar.getInstance().getTime());
+
+        // Update in Firestore
+        db.collection("posts")
+                .document(postId)
+                .update(updates)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(EditPostActivity.this, 
+                            "Post updated successfully", Toast.LENGTH_SHORT).show();
+                    
+                    isEditing = false;
+                    setFieldsEnabled(false);
+                    btnEditSave.setText(R.string.edit);
+                    
+                    int defaultBackgroundColor = getResources().getColor(
+                            android.R.color.transparent, getTheme());
+                    changeEditableBackgroundTint(defaultBackgroundColor);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error updating post", e);
+                    Toast.makeText(EditPostActivity.this, 
+                            "Error updating post: " + e.getMessage(), 
+                            Toast.LENGTH_SHORT).show();
+                })
+                .addOnCompleteListener(task -> btnEditSave.setEnabled(true));
+    }
+
+    private boolean validateInputs() {
+        if (etTitle.getText().toString().trim().isEmpty()) {
+            etTitle.setError("Title is required");
+            return false;
+        }
+        if (etSubject.getText().toString().trim().isEmpty()) {
+            etSubject.setError("Subject is required");
+            return false;
+        }
+        if (etDescription.getText().toString().trim().isEmpty()) {
+            etDescription.setError("Description is required");
+            return false;
+        }
+        if (etAmount.getText().toString().trim().isEmpty()) {
+            etAmount.setError("Amount is required");
+            return false;
+        }
+        if (etTokens.getText().toString().trim().isEmpty()) {
+            etTokens.setError("Tokens are required");
+            return false;
+        }
+        return true;
     }
 
     private void setFieldsEnabled(boolean enabled) {

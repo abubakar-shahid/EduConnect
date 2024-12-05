@@ -8,7 +8,6 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
@@ -65,7 +64,7 @@ public class StudentDashboardActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_profile) {
-            Intent intent = new Intent(this, ProfileActivity.class);
+            Intent intent = new Intent(this, ProfileActivityStudent.class);
             startActivity(intent);
             return true;
         } else if (id == R.id.action_logout) {

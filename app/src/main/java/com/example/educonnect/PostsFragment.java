@@ -87,6 +87,7 @@ public class PostsFragment extends Fragment {
                         String[] dateTime = date.split(" ");
                         
                         Post post = new Post(
+                                document.getId(),
                                 title,
                                 subject,
                                 description,

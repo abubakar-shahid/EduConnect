@@ -19,7 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivityStudent extends AppCompatActivity {
 
     private static final String TAG = "ProfileActivity";
     private TextInputEditText etFullName, etEmail, etPassword, etPhoneNumber, etInstitute, etCity;
@@ -33,7 +33,7 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        setContentView(R.layout.activity_student_profile);
 
         // Initialize Firebase
         mAuth = FirebaseAuth.getInstance();
@@ -93,7 +93,7 @@ public class ProfileActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error loading profile", e);
-                    Toast.makeText(ProfileActivity.this, 
+                    Toast.makeText(ProfileActivityStudent.this,
                             "Error loading profile: " + e.getMessage(), 
                             Toast.LENGTH_SHORT).show();
                 });
@@ -167,7 +167,7 @@ public class ProfileActivity extends AppCompatActivity {
         db.collection("students").document(userId)
                 .set(profile)
                 .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(ProfileActivity.this, 
+                    Toast.makeText(ProfileActivityStudent.this,
                             "Profile updated successfully", Toast.LENGTH_SHORT).show();
                     isEditing = false;
                     setFieldsEnabled(false);
@@ -178,7 +178,7 @@ public class ProfileActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error updating profile", e);
-                    Toast.makeText(ProfileActivity.this, 
+                    Toast.makeText(ProfileActivityStudent.this,
                             "Error updating profile: " + e.getMessage(), 
                             Toast.LENGTH_SHORT).show();
                 })
