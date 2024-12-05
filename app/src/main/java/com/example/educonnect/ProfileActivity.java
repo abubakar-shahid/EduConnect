@@ -1,31 +1,47 @@
 package com.example.educonnect;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ProfileActivity extends AppCompatActivity {
 
+    private static final String TAG = "ProfileActivity";
     private TextInputEditText etFullName, etEmail, etPassword, etPhoneNumber, etInstitute, etCity;
     private AutoCompleteTextView spinnerCountryCode, spinnerCategory, spinnerCountry;
     private Button btnEditSave;
     private boolean isEditing = false;
+
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        // Initialize Firebase
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+
         initViews();
         setupSpinners();
-        loadProfileData();
+        loadProfileFromFirestore();
 
         btnEditSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,18 +82,44 @@ public class ProfileActivity extends AppCompatActivity {
         spinnerCountry.setAdapter(countryAdapter);
     }
 
-    private void loadProfileData() {
-        // TODO: Load profile data from database or shared preferences
-        // For now, we'll use dummy data
-        etFullName.setText("John Doe");
-        etEmail.setText("johndoe@example.com");
-        etPassword.setText("********");
-        etPhoneNumber.setText("1234567890");
-        etInstitute.setText("Example University");
-        etCity.setText("New York");
-        spinnerCountryCode.setText(spinnerCountryCode.getAdapter().getItem(0).toString(), false);
-        spinnerCategory.setText(spinnerCategory.getAdapter().getItem(1).toString(), false);
-        spinnerCountry.setText(spinnerCountry.getAdapter().getItem(0).toString(), false);
+    private void loadProfileFromFirestore() {
+        String userId = mAuth.getCurrentUser().getUid();
+        db.collection("students").document(userId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        updateUIWithProfile(documentSnapshot);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error loading profile", e);
+                    Toast.makeText(ProfileActivity.this, 
+                            "Error loading profile: " + e.getMessage(), 
+                            Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void updateUIWithProfile(DocumentSnapshot document) {
+        etFullName.setText(document.getString("fullName"));
+        etEmail.setText(document.getString("email"));
+        etPhoneNumber.setText(document.getString("phoneNumber"));
+        etInstitute.setText(document.getString("institute"));
+        etCity.setText(document.getString("city"));
+        
+        String countryCode = document.getString("countryCode");
+        if (countryCode != null) {
+            spinnerCountryCode.setText(countryCode, false);
+        }
+        
+        String category = document.getString("category");
+        if (category != null) {
+            spinnerCategory.setText(category, false);
+        }
+        
+        String country = document.getString("country");
+        if (country != null) {
+            spinnerCountry.setText(country, false);
+        }
     }
 
     private void enableEditing() {
@@ -91,7 +133,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void changeEditableBackgroundTint(int color) {
         View[] editableViews = {
-            etFullName, etEmail, etPassword, etPhoneNumber, etInstitute, etCity,
+            etFullName, etPhoneNumber, etInstitute, etCity,
             spinnerCountryCode, spinnerCategory, spinnerCountry
         };
 
@@ -103,25 +145,76 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void saveProfile() {
-        isEditing = false;
-        setFieldsEnabled(false);
-        btnEditSave.setText(R.string.edit);
+        if (!validateInputs()) {
+            return;
+        }
 
-        int defaultBackgroundColor = getResources().getColor(android.R.color.transparent, getTheme());
-        changeEditableBackgroundTint(defaultBackgroundColor);
+        String userId = mAuth.getCurrentUser().getUid();
+        Map<String, Object> profile = new HashMap<>();
+        profile.put("fullName", etFullName.getText().toString().trim());
+        profile.put("email", etEmail.getText().toString().trim());
+        profile.put("phoneNumber", etPhoneNumber.getText().toString().trim());
+        profile.put("institute", etInstitute.getText().toString().trim());
+        profile.put("city", etCity.getText().toString().trim());
+        profile.put("countryCode", spinnerCountryCode.getText().toString());
+        profile.put("category", spinnerCategory.getText().toString());
+        profile.put("country", spinnerCountry.getText().toString());
+        profile.put("updatedAt", java.util.Calendar.getInstance().getTime());
 
-        // TODO: Save profile data to database or shared preferences
+        // Disable button while saving
+        btnEditSave.setEnabled(false);
+
+        db.collection("students").document(userId)
+                .set(profile)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(ProfileActivity.this, 
+                            "Profile updated successfully", Toast.LENGTH_SHORT).show();
+                    isEditing = false;
+                    setFieldsEnabled(false);
+                    btnEditSave.setText(R.string.edit);
+                    int defaultBackgroundColor = getResources().getColor(
+                            android.R.color.transparent, getTheme());
+                    changeEditableBackgroundTint(defaultBackgroundColor);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error updating profile", e);
+                    Toast.makeText(ProfileActivity.this, 
+                            "Error updating profile: " + e.getMessage(), 
+                            Toast.LENGTH_SHORT).show();
+                })
+                .addOnCompleteListener(task -> btnEditSave.setEnabled(true));
+    }
+
+    private boolean validateInputs() {
+        if (etFullName.getText().toString().trim().isEmpty()) {
+            etFullName.setError("Name is required");
+            return false;
+        }
+        if (etPhoneNumber.getText().toString().trim().isEmpty()) {
+            etPhoneNumber.setError("Phone number is required");
+            return false;
+        }
+        if (etInstitute.getText().toString().trim().isEmpty()) {
+            etInstitute.setError("Institute is required");
+            return false;
+        }
+        if (spinnerCategory.getText().toString().isEmpty()) {
+            spinnerCategory.setError("Category is required");
+            return false;
+        }
+        return true;
     }
 
     private void setFieldsEnabled(boolean enabled) {
         etFullName.setEnabled(enabled);
-        etEmail.setEnabled(enabled);
-        etPassword.setEnabled(enabled);
         etPhoneNumber.setEnabled(enabled);
         etInstitute.setEnabled(enabled);
         etCity.setEnabled(enabled);
         spinnerCountryCode.setEnabled(enabled);
         spinnerCategory.setEnabled(enabled);
         spinnerCountry.setEnabled(enabled);
+        // Email and password fields remain disabled for security
+        etEmail.setEnabled(false);
+        etPassword.setEnabled(false);
     }
 }
