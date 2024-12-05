@@ -51,6 +51,9 @@ dependencies {
     // Firebase Firestore
     implementation("com.google.firebase:firebase-firestore")
     
+    // Firebase Realtime Database
+    implementation("com.google.firebase:firebase-database")
+    
     // Firebase Analytics (recommended)
     implementation("com.google.firebase:firebase-analytics")
 }

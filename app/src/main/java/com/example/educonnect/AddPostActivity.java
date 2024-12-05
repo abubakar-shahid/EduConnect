@@ -8,29 +8,35 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ServerTimestamp;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class AddPostActivity extends AppCompatActivity {
 
     private TextInputEditText etTitle, etSubject, etDescription, etAmount, etTokens;
     private Button btnCreatePost;
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_post);
 
+        // Initialize Firebase
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+
         initViews();
 
-        btnCreatePost.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                createPost();
-            }
-        });
+        btnCreatePost.setOnClickListener(v -> createPost());
     }
 
     private void initViews() {
@@ -49,7 +55,8 @@ public class AddPostActivity extends AppCompatActivity {
         String amountStr = etAmount.getText().toString().trim();
         String tokensStr = etTokens.getText().toString().trim();
 
-        if (title.isEmpty() || subject.isEmpty() || description.isEmpty() || amountStr.isEmpty() || tokensStr.isEmpty()) {
+        if (title.isEmpty() || subject.isEmpty() || description.isEmpty() || 
+            amountStr.isEmpty() || tokensStr.isEmpty()) {
             Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -65,16 +72,33 @@ public class AddPostActivity extends AppCompatActivity {
             return;
         }
 
-        // Get current date and time
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-        String currentDateAndTime = sdf.format(new Date());
+        // Disable button while processing
+        btnCreatePost.setEnabled(false);
 
-        // Create a new Post object
-        Post newPost = new Post(title, subject, description, currentDateAndTime.split(" ")[0], currentDateAndTime.split(" ")[1], amount, tokens);
+        // Create post data
+        Map<String, Object> post = new HashMap<>();
+        post.put("title", title);
+        post.put("subject", subject);
+        post.put("description", description);
+        post.put("amount", amount);
+        post.put("tokens", tokens);
+        post.put("studentId", mAuth.getCurrentUser().getUid());
+        post.put("createdAt", new Date());
+        post.put("status", "active");
 
-        // TODO: Save the new post to your data source (e.g., database, API)
-        // For now, we'll just show a success message and finish the activity
-        Toast.makeText(this, "Post created successfully", Toast.LENGTH_SHORT).show();
-        finish();
+        // Save to Firestore
+        db.collection("posts")
+                .add(post)
+                .addOnSuccessListener(documentReference -> {
+                    Toast.makeText(AddPostActivity.this, 
+                            "Post created successfully", Toast.LENGTH_SHORT).show();
+                    finish();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(AddPostActivity.this, 
+                            "Error creating post: " + e.getMessage(), 
+                            Toast.LENGTH_SHORT).show();
+                    btnCreatePost.setEnabled(true);
+                });
     }
 }

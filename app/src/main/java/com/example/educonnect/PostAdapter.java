@@ -45,6 +45,12 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         return posts.size();
     }
 
+    public void updatePosts(List<Post> newPosts) {
+        posts.clear();
+        posts.addAll(newPosts);
+        notifyDataSetChanged();
+    }
+
     class PostViewHolder extends RecyclerView.ViewHolder {
         TextView titleTextView, subjectTextView, descriptionTextView, dateTimeTextView, amountTextView, tokensTextView;
         Button actionButton;
