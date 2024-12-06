@@ -102,11 +102,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                 
                 if (currentUserId.equals(post.getStudentId())) {
                     checkProposalsButton.setVisibility(View.VISIBLE);
-                    checkProposalsButton.setOnClickListener(v -> {
-                        Intent intent = new Intent(itemView.getContext(), ViewProposalsActivity.class);
-                        intent.putExtra("post_id", post.getPostId());
-                        itemView.getContext().startActivity(intent);
-                    });
+                    checkProposalsButton.setOnClickListener(v -> showProposalsDialog(post.getPostId()));
                 } else {
                     checkProposalsButton.setVisibility(View.GONE);
                 }
@@ -121,8 +117,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             Dialog dialog = new Dialog(itemView.getContext());
             dialog.setContentView(R.layout.layout_proposal_dialog);
 
-            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, 
-                    ViewGroup.LayoutParams.WRAP_CONTENT);
+            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             dialog.getWindow().setGravity(Gravity.CENTER);
 
             TextInputEditText proposalInput = dialog.findViewById(R.id.proposal_input);
@@ -131,85 +126,62 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
             submitButton.setOnClickListener(v -> {
                 String proposalText = proposalInput.getText().toString().trim();
-                String amountStr = amountInput.getText().toString().trim();
+                String amountText = amountInput.getText().toString().trim();
 
-                if (proposalText.isEmpty() || amountStr.isEmpty()) {
+                if (proposalText.isEmpty() || amountText.isEmpty()) {
                     Toast.makeText(itemView.getContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                try {
-                    double amount = Double.parseDouble(amountStr);
-                    String tutorId = mAuth.getCurrentUser().getUid();
+                // Get current user (tutor) details
+                String tutorId = mAuth.getCurrentUser().getUid();
+                
+                // Create a new proposal object
+                String proposalId = realTimeDb.getReference("proposals").push().getKey();
+                
+                Proposal proposal = new Proposal(
+                    proposalId,
+                    postId,
+                    tutorId,
+                    "", // tutorName will be set after fetching from Firestore
+                    proposalText,
+                    amountText,
+                    System.currentTimeMillis()
+                );
 
-                    // First get the student ID from the post
-                    db.collection("posts").document(postId)
-                            .get()
-                            .addOnSuccessListener(postDoc -> {
-                                String studentId = postDoc.getString("studentId");
-                                
-                                // Then get tutor's name
-                                db.collection("users").document(tutorId)
-                                        .get()
-                                        .addOnSuccessListener(tutorDoc -> {
-                                            String tutorName = tutorDoc.getString("fullName");
+                // Get tutor's name from Firestore
+                db.collection("tutors").document(tutorId).get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            String tutorName = documentSnapshot.getString("name");
+                            proposal.setTutorName(tutorName);
 
-                                            // Generate a unique proposal ID
-                                            String proposalId = realTimeDb.getReference("proposals")
-                                                    .child(postId)
-                                                    .push()
-                                                    .getKey();
-
-                                            // Create proposal object
-                                            Proposal proposal = new Proposal(
-                                                    proposalId,
-                                                    postId,
-                                                    studentId,
-                                                    tutorId,
-                                                    tutorName,
-                                                    proposalText,
-                                                    amount,
-                                                    System.currentTimeMillis()
-                                            );
-
-                                            // Save to Firebase Realtime Database
-                                            if (proposalId != null) {
-                                                realTimeDb.getReference("proposals")
-                                                        .child(postId)
-                                                        .child(proposalId)
-                                                        .setValue(proposal)
-                                                        .addOnSuccessListener(aVoid -> {
-                                                            Toast.makeText(itemView.getContext(),
-                                                                    "Proposal submitted successfully",
-                                                                    Toast.LENGTH_SHORT).show();
-                                                            dialog.dismiss();
-                                                        })
-                                                        .addOnFailureListener(e -> {
-                                                            Toast.makeText(itemView.getContext(),
-                                                                    "Error submitting proposal: " + e.getMessage(),
-                                                                    Toast.LENGTH_SHORT).show();
-                                                        });
-                                            }
-                                        })
-                                        .addOnFailureListener(e -> {
-                                            Toast.makeText(itemView.getContext(),
-                                                    "Error getting tutor info: " + e.getMessage(),
-                                                    Toast.LENGTH_SHORT).show();
-                                        });
-                            })
-                            .addOnFailureListener(e -> {
-                                Toast.makeText(itemView.getContext(),
-                                        "Error getting post info: " + e.getMessage(),
-                                        Toast.LENGTH_SHORT).show();
-                            });
-
-                } catch (NumberFormatException e) {
-                    Toast.makeText(itemView.getContext(),
-                            "Please enter a valid amount", Toast.LENGTH_SHORT).show();
-                }
+                            // Save proposal to Firebase Realtime Database
+                            realTimeDb.getReference("proposals")
+                                .child(proposalId)
+                                .setValue(proposal)
+                                .addOnSuccessListener(aVoid -> {
+                                    Toast.makeText(itemView.getContext(), 
+                                        "Proposal submitted successfully", Toast.LENGTH_SHORT).show();
+                                    dialog.dismiss();
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(itemView.getContext(), 
+                                        "Failed to submit proposal", Toast.LENGTH_SHORT).show();
+                                });
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(itemView.getContext(), 
+                            "Failed to get tutor information", Toast.LENGTH_SHORT).show();
+                    });
             });
 
             dialog.show();
+        }
+
+        private void showProposalsDialog(String postId) {
+            // TODO: Implement proposals dialog display logic
         }
     }
 }
