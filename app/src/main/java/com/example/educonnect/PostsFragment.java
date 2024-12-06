@@ -156,6 +156,7 @@ public class PostsFragment extends Fragment {
         String description = document.getString("description");
         Double amount = document.getDouble("amount");
         Long tokens = document.getLong("tokens");
+        String studentId = document.getString("studentId");
         
         String date = "";
         String time = "";
@@ -171,6 +172,7 @@ public class PostsFragment extends Fragment {
         
         return new Post(
                 document.getId(),
+                studentId != null ? studentId : "",
                 title != null ? title : "",
                 subject != null ? subject : "",
                 description != null ? description : "",
@@ -252,6 +254,7 @@ public class PostsFragment extends Fragment {
                             
                             Post post = new Post(
                                     document.getId(),
+                                    currentUserId,
                                     title != null ? title : "",
                                     subject != null ? subject : "",
                                     description != null ? description : "",

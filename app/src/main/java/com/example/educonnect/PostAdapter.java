@@ -17,14 +17,24 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.List;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.database.FirebaseDatabase;
+
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
 
     private List<Post> posts;
     private boolean isStudent;
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
+    private FirebaseDatabase realTimeDb;
 
     public PostAdapter(List<Post> posts, boolean isStudent) {
         this.posts = posts;
         this.isStudent = isStudent;
+        this.mAuth = FirebaseAuth.getInstance();
+        this.db = FirebaseFirestore.getInstance();
+        this.realTimeDb = FirebaseDatabase.getInstance();
     }
 
     @NonNull
@@ -53,7 +63,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
     class PostViewHolder extends RecyclerView.ViewHolder {
         TextView titleTextView, subjectTextView, descriptionTextView, dateTimeTextView, amountTextView, tokensTextView;
-        Button actionButton;
+        Button actionButton, checkProposalsButton;
 
         public PostViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -64,6 +74,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             amountTextView = itemView.findViewById(R.id.post_amount);
             tokensTextView = itemView.findViewById(R.id.post_tokens);
             actionButton = itemView.findViewById(R.id.post_action_button);
+            checkProposalsButton = itemView.findViewById(R.id.check_proposals_button);
         }
 
         public void bind(Post post) {
@@ -73,6 +84,8 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             dateTimeTextView.setText(post.getDate() + " " + post.getTime());
             amountTextView.setText("$" + post.getAmount());
             tokensTextView.setText(post.getTokens() + " tokens required");
+
+            String currentUserId = mAuth.getCurrentUser().getUid();
 
             if (isStudent) {
                 actionButton.setText("Edit");
@@ -86,13 +99,21 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                     intent.putExtra("tokens", post.getTokens());
                     itemView.getContext().startActivity(intent);
                 });
+                
+                if (currentUserId.equals(post.getStudentId())) {
+                    checkProposalsButton.setVisibility(View.VISIBLE);
+                    checkProposalsButton.setOnClickListener(v -> showProposalsDialog(post.getPostId()));
+                } else {
+                    checkProposalsButton.setVisibility(View.GONE);
+                }
             } else {
                 actionButton.setText("Submit Proposal");
-                actionButton.setOnClickListener(v -> showProposalDialog());
+                actionButton.setOnClickListener(v -> showProposalDialog(post.getPostId()));
+                checkProposalsButton.setVisibility(View.GONE);
             }
         }
 
-        private void showProposalDialog() {
+        private void showProposalDialog(String postId) {
             Dialog dialog = new Dialog(itemView.getContext());
             dialog.setContentView(R.layout.layout_proposal_dialog);
 
@@ -117,6 +138,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             });
 
             dialog.show();
+        }
+
+        private void showProposalsDialog(String postId) {
+            // TODO: Implement proposals dialog display logic
         }
     }
 }

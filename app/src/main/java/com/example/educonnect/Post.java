@@ -2,6 +2,7 @@ package com.example.educonnect;
 
 public class Post {
     private String postId;
+    private String studentId;
     private String title;
     private String subject;
     private String description;
@@ -10,8 +11,9 @@ public class Post {
     private double amount;
     private int tokens;
 
-    public Post(String postId, String title, String subject, String description, String date, String time, double amount, int tokens) {
+    public Post(String postId, String studentId, String title, String subject, String description, String date, String time, double amount, int tokens) {
         this.postId = postId;
+        this.studentId = studentId;
         this.title = title;
         this.subject = subject;
         this.description = description;
@@ -23,6 +25,7 @@ public class Post {
 
     // Add getters for all fields
     public String getPostId() { return postId; }
+    public String getStudentId() { return studentId; }
     public String getTitle() { return title; }
     public String getSubject() { return subject; }
     public String getDescription() { return description; }
