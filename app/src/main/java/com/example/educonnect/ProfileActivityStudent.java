@@ -84,41 +84,113 @@ public class ProfileActivityStudent extends AppCompatActivity {
 
     private void loadProfileFromFirestore() {
         String userId = mAuth.getCurrentUser().getUid();
+        
+        // First set the email from Firebase Auth
+        if (mAuth.getCurrentUser() != null) {
+            etEmail.setText(mAuth.getCurrentUser().getEmail());
+        }
+
+        // Load basic info from users collection first
+        db.collection("users").document(userId)
+            .get()
+            .addOnSuccessListener(userDoc -> {
+                if (userDoc.exists()) {
+                    String fullName = userDoc.getString("fullName");
+                    if (fullName != null && !fullName.isEmpty()) {
+                        etFullName.setText(fullName);
+                    }
+                }
+                
+                // Then load additional profile data if it exists
+                loadAdditionalProfileData(userId);
+            })
+            .addOnFailureListener(e -> {
+                Log.e(TAG, "Error loading basic profile", e);
+                Toast.makeText(ProfileActivityStudent.this,
+                        "Error loading basic profile: " + e.getMessage(), 
+                        Toast.LENGTH_SHORT).show();
+            });
+    }
+
+    private void loadAdditionalProfileData(String userId) {
         db.collection("students").document(userId)
                 .get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
                         updateUIWithProfile(documentSnapshot);
+                    } else {
+                        // Set placeholder texts for empty fields
+                        setPlaceholders();
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error loading profile", e);
+                    Log.e(TAG, "Error loading additional profile data", e);
                     Toast.makeText(ProfileActivityStudent.this,
-                            "Error loading profile: " + e.getMessage(), 
+                            "Error loading profile details: " + e.getMessage(), 
                             Toast.LENGTH_SHORT).show();
+                    setPlaceholders();
                 });
     }
 
+    private void setPlaceholders() {
+        etPhoneNumber.setText("");
+        etInstitute.setText("");
+        etCity.setText("");
+        spinnerCountryCode.setText("", false);
+        spinnerCategory.setText("", false);
+        spinnerCountry.setText("", false);
+
+        etPhoneNumber.setHint("Add your phone number");
+        etInstitute.setHint("Add your institute");
+        etCity.setHint("Add your city");
+        spinnerCountryCode.setHint("Select country code");
+        spinnerCategory.setHint("Select education category");
+        spinnerCountry.setHint("Select country");
+    }
+
     private void updateUIWithProfile(DocumentSnapshot document) {
-        etFullName.setText(document.getString("fullName"));
-        etEmail.setText(document.getString("email"));
-        etPhoneNumber.setText(document.getString("phoneNumber"));
-        etInstitute.setText(document.getString("institute"));
-        etCity.setText(document.getString("city"));
-        
+        // Get values from document
+        String fullName = document.getString("fullName");
+        String email = document.getString("email");
+        String phoneNumber = document.getString("phoneNumber");
+        String institute = document.getString("institute");
+        String city = document.getString("city");
         String countryCode = document.getString("countryCode");
-        if (countryCode != null) {
-            spinnerCountryCode.setText(countryCode, false);
-        }
-        
         String category = document.getString("category");
-        if (category != null) {
-            spinnerCategory.setText(category, false);
-        }
-        
         String country = document.getString("country");
-        if (country != null) {
+
+        // Set values or hints based on whether data exists
+        etFullName.setText(fullName != null && !fullName.isEmpty() ? fullName : "Add your full name");
+        etEmail.setText(email != null && !email.isEmpty() ? email : "Add your email");
+        
+        etPhoneNumber.setText(phoneNumber != null && !phoneNumber.isEmpty() ? phoneNumber : "");
+        etPhoneNumber.setHint(phoneNumber == null || phoneNumber.isEmpty() ? "Add your phone number" : "");
+        
+        etInstitute.setText(institute != null && !institute.isEmpty() ? institute : "");
+        etInstitute.setHint(institute == null || institute.isEmpty() ? "Add your institute" : "");
+        
+        etCity.setText(city != null && !city.isEmpty() ? city : "");
+        etCity.setHint(city == null || city.isEmpty() ? "Add your city" : "");
+
+        if (countryCode != null && !countryCode.isEmpty()) {
+            spinnerCountryCode.setText(countryCode, false);
+        } else {
+            spinnerCountryCode.setText("", false);
+            spinnerCountryCode.setHint("Country Code");
+        }
+
+        if (category != null && !category.isEmpty()) {
+            spinnerCategory.setText(category, false);
+        } else {
+            spinnerCategory.setText("", false);
+            spinnerCategory.setHint("Select Category");
+        }
+
+        if (country != null && !country.isEmpty()) {
             spinnerCountry.setText(country, false);
+        } else {
+            spinnerCountry.setText("", false);
+            spinnerCountry.setHint("Select Country");
         }
     }
 
