@@ -11,15 +11,23 @@ import android.widget.Toast;
 import android.view.Gravity;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.List;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Map;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.ServerValue;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
 
@@ -125,15 +133,59 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             Button submitButton = dialog.findViewById(R.id.submit_proposal_dialog_button);
 
             submitButton.setOnClickListener(v -> {
-                String proposal = proposalInput.getText().toString();
-                String amount = amountInput.getText().toString();
+                String proposalText = proposalInput.getText().toString().trim();
+                String amountStr = amountInput.getText().toString().trim();
 
-                if (proposal.isEmpty() || amount.isEmpty()) {
-                    Toast.makeText(itemView.getContext(), "Please fill all fields", Toast.LENGTH_SHORT).show();
-                } else {
-                    // TODO: Implement proposal submission logic
-                    Toast.makeText(itemView.getContext(), "Proposal submitted", Toast.LENGTH_SHORT).show();
-                    dialog.dismiss();
+                if (proposalText.isEmpty() || amountStr.isEmpty()) {
+                    Toast.makeText(itemView.getContext(), 
+                            "Please fill all fields", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                try {
+                    double amount = Double.parseDouble(amountStr);
+                    String tutorId = mAuth.getCurrentUser().getUid();
+
+                    // First get tutor's name from Firestore
+                    db.collection("users").document(tutorId)
+                            .get()
+                            .addOnSuccessListener(documentSnapshot -> {
+                                String tutorName = documentSnapshot.getString("fullName");
+                                
+                                // Create proposal object
+                                Map<String, Object> proposal = new HashMap<>();
+                                proposal.put("tutorId", tutorId);
+                                proposal.put("tutorName", tutorName);
+                                proposal.put("proposal", proposalText);
+                                proposal.put("amount", amount);
+                                proposal.put("timestamp", ServerValue.TIMESTAMP);
+
+                                // Save to Firebase Realtime Database
+                                realTimeDb.getReference("proposals")
+                                        .child(postId)
+                                        .push()
+                                        .setValue(proposal)
+                                        .addOnSuccessListener(aVoid -> {
+                                            Toast.makeText(itemView.getContext(), 
+                                                    "Proposal submitted successfully", 
+                                                    Toast.LENGTH_SHORT).show();
+                                            dialog.dismiss();
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            Toast.makeText(itemView.getContext(),
+                                                    "Error submitting proposal: " + e.getMessage(),
+                                                    Toast.LENGTH_SHORT).show();
+                                        });
+                            })
+                            .addOnFailureListener(e -> {
+                                Toast.makeText(itemView.getContext(),
+                                        "Error getting tutor info: " + e.getMessage(),
+                                        Toast.LENGTH_SHORT).show();
+                            });
+
+                } catch (NumberFormatException e) {
+                    Toast.makeText(itemView.getContext(), 
+                            "Please enter a valid amount", Toast.LENGTH_SHORT).show();
                 }
             });
 
@@ -141,7 +193,48 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         }
 
         private void showProposalsDialog(String postId) {
-            // TODO: Implement proposals dialog display logic
+            Dialog dialog = new Dialog(itemView.getContext());
+            dialog.setContentView(R.layout.layout_proposals_list);
+
+            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+            RecyclerView proposalsRecyclerView = dialog.findViewById(R.id.proposals_recycler_view);
+            proposalsRecyclerView.setLayoutManager(new LinearLayoutManager(itemView.getContext()));
+
+            ProposalsAdapter proposalsAdapter = new ProposalsAdapter();
+            proposalsRecyclerView.setAdapter(proposalsAdapter);
+
+            // Load proposals from Firebase Realtime Database
+            realTimeDb.getReference("proposals")
+                    .child(postId)
+                    .addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            List<Proposal> proposals = new ArrayList<>();
+                            for (DataSnapshot proposalSnapshot : snapshot.getChildren()) {
+                                Proposal proposal = proposalSnapshot.getValue(Proposal.class);
+                                if (proposal != null) {
+                                    proposals.add(proposal);
+                                }
+                            }
+
+                            if (proposals.isEmpty()) {
+                                Toast.makeText(itemView.getContext(), 
+                                        "No proposals yet", Toast.LENGTH_SHORT).show();
+                            }
+
+                            proposalsAdapter.setProposals(proposals);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                            Toast.makeText(itemView.getContext(),
+                                    "Error loading proposals: " + error.getMessage(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+            dialog.show();
         }
     }
 }
