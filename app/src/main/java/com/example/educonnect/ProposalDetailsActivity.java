@@ -4,7 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import com.google.firebase.firestore.FirebaseFirestore;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -40,8 +42,19 @@ public class ProposalDetailsActivity extends AppCompatActivity {
         // Handle chat button click
         chatButton.setOnClickListener(v -> {
             Intent chatIntent = new Intent(this, ChatActivity.class);
-            chatIntent.putExtra("tutor_id", tutorId);
-            startActivity(chatIntent);
+            chatIntent.putExtra("other_user_id", tutorId);
+            
+            // Get tutor name from Firebase
+            FirebaseFirestore.getInstance().collection("users").document(tutorId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    String tutorName = documentSnapshot.getString("fullName");
+                    chatIntent.putExtra("other_user_name", tutorName);
+                    startActivity(chatIntent);
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Error starting chat", Toast.LENGTH_SHORT).show();
+                });
         });
     }
 } 

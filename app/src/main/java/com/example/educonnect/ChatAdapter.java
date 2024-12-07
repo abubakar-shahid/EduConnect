@@ -4,18 +4,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder> {
 
-    private List<Chat> chats;
+    private List<ChatInbox> chats;
     private OnChatClickListener listener;
 
-    public ChatAdapter(List<Chat> chats, OnChatClickListener listener) {
+    public ChatAdapter(List<ChatInbox> chats, OnChatClickListener listener) {
         this.chats = chats;
         this.listener = listener;
     }
@@ -29,7 +30,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
-        Chat chat = chats.get(position);
+        ChatInbox chat = chats.get(position);
         holder.bind(chat);
     }
 
@@ -39,7 +40,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
     }
 
     public interface OnChatClickListener {
-        void onChatClick(Chat chat);
+        void onChatClick(ChatInbox chat);
     }
 
     class ChatViewHolder extends RecyclerView.ViewHolder {
@@ -51,21 +52,21 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             lastMessageTextView = itemView.findViewById(R.id.chat_last_message);
             timeTextView = itemView.findViewById(R.id.chat_time);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = getAdapterPosition();
-                    if (position != RecyclerView.NO_POSITION && ChatAdapter.this.listener != null) {
-                        ChatAdapter.this.listener.onChatClick(ChatAdapter.this.chats.get(position));
-                    }
+            itemView.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (position != RecyclerView.NO_POSITION && listener != null) {
+                    listener.onChatClick(chats.get(position));
                 }
             });
         }
 
-        public void bind(Chat chat) {
-            nameTextView.setText(chat.getName());
+        public void bind(ChatInbox chat) {
+            nameTextView.setText(chat.getParticipantName());
             lastMessageTextView.setText(chat.getLastMessage());
-            timeTextView.setText(chat.getTime());
+            
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            String time = sdf.format(new Date(chat.getLastMessageTime()));
+            timeTextView.setText(time);
         }
     }
 }

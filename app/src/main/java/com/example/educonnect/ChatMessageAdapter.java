@@ -1,77 +1,101 @@
 package com.example.educonnect;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
-public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageAdapter.MessageViewHolder> {
+public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private static final int VIEW_TYPE_SENT = 1;
+    private static final int VIEW_TYPE_RECEIVED = 2;
 
-    private static final int VIEW_TYPE_MESSAGE_SENT = 1;
-    private static final int VIEW_TYPE_MESSAGE_RECEIVED = 2;
+    private List<ChatMessage> messages;
+    private String currentUserId;
 
-    private Context context;
-    private List<ChatMessage> messageList;
-
-    public ChatMessageAdapter(Context context, List<ChatMessage> messageList) {
-        this.context = context;
-        this.messageList = messageList;
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        ChatMessage message = messageList.get(position);
-
-        if (message.isSentByUser()) {
-            return VIEW_TYPE_MESSAGE_SENT;
-        } else {
-            return VIEW_TYPE_MESSAGE_RECEIVED;
-        }
+    public ChatMessageAdapter(List<ChatMessage> messages, String currentUserId) {
+        this.messages = messages;
+        this.currentUserId = currentUserId;
     }
 
     @NonNull
     @Override
-    public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view;
-
-        if (viewType == VIEW_TYPE_MESSAGE_SENT) {
-            view = LayoutInflater.from(parent.getContext())
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        if (viewType == VIEW_TYPE_SENT) {
+            View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_message_sent, parent, false);
+            return new SentMessageHolder(view);
         } else {
-            view = LayoutInflater.from(parent.getContext())
+            View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_message_received, parent, false);
+            return new ReceivedMessageHolder(view);
         }
-
-        return new MessageViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
-        ChatMessage message = messageList.get(position);
-        holder.bind(message);
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        ChatMessage message = messages.get(position);
+
+        if (holder.getItemViewType() == VIEW_TYPE_SENT) {
+            ((SentMessageHolder) holder).bind(message);
+        } else {
+            ((ReceivedMessageHolder) holder).bind(message);
+        }
     }
 
     @Override
     public int getItemCount() {
-        return messageList.size();
+        return messages.size();
     }
 
-    class MessageViewHolder extends RecyclerView.ViewHolder {
-        TextView messageText;
+    @Override
+    public int getItemViewType(int position) {
+        ChatMessage message = messages.get(position);
+        if (message.getSenderId().equals(currentUserId)) {
+            return VIEW_TYPE_SENT;
+        } else {
+            return VIEW_TYPE_RECEIVED;
+        }
+    }
 
-        MessageViewHolder(View itemView) {
+    private static class SentMessageHolder extends RecyclerView.ViewHolder {
+        TextView messageText, timeText;
+
+        SentMessageHolder(View itemView) {
             super(itemView);
-            messageText = itemView.findViewById(R.id.text_message_body);
+            messageText = itemView.findViewById(R.id.message_text);
+            timeText = itemView.findViewById(R.id.message_time);
         }
 
         void bind(ChatMessage message) {
             messageText.setText(message.getMessage());
+            
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            String time = sdf.format(new Date(message.getTimestamp()));
+            timeText.setText(time);
+        }
+    }
+
+    private static class ReceivedMessageHolder extends RecyclerView.ViewHolder {
+        TextView messageText, timeText;
+
+        ReceivedMessageHolder(View itemView) {
+            super(itemView);
+            messageText = itemView.findViewById(R.id.message_text);
+            timeText = itemView.findViewById(R.id.message_time);
+        }
+
+        void bind(ChatMessage message) {
+            messageText.setText(message.getMessage());
+            
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            String time = sdf.format(new Date(message.getTimestamp()));
+            timeText.setText(time);
         }
     }
 }
