@@ -2,6 +2,7 @@ package com.example.educonnect;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,10 +12,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.*;
+import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ChatsFragment extends Fragment {
+    private static final String TAG = "ChatsFragment";
     private RecyclerView recyclerView;
     private ChatAdapter chatAdapter;
     private List<ChatInbox> chatList;
@@ -57,7 +60,11 @@ public class ChatsFragment extends Fragment {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         ChatInbox chat = snapshot.getValue(ChatInbox.class);
                         if (chat != null) {
-                            chatList.add(chat);
+                            if (chat.getParticipantName() == null || chat.getParticipantName().isEmpty()) {
+                                loadParticipantName(chat);
+                            } else {
+                                chatList.add(chat);
+                            }
                         }
                     }
                     
@@ -74,8 +81,36 @@ public class ChatsFragment extends Fragment {
 
                 @Override
                 public void onCancelled(DatabaseError error) {
-                    // Handle error
+                    Log.e(TAG, "Error loading chats: " + error.getMessage());
                 }
+            });
+    }
+
+    private void loadParticipantName(ChatInbox chat) {
+        FirebaseFirestore.getInstance()
+            .collection("users")
+            .document(chat.getParticipantId())
+            .get()
+            .addOnSuccessListener(documentSnapshot -> {
+                if (documentSnapshot.exists()) {
+                    String participantName = documentSnapshot.getString("fullName");
+                    if (participantName != null && !participantName.isEmpty()) {
+                        chat.setParticipantName(participantName);
+                        
+                        database.getReference("chat_inbox")
+                            .child(currentUserId)
+                            .child(chat.getChatId())
+                            .child("participantName")
+                            .setValue(participantName)
+                            .addOnSuccessListener(aVoid -> {
+                                chatList.add(chat);
+                                chatAdapter.notifyDataSetChanged();
+                            });
+                    }
+                }
+            })
+            .addOnFailureListener(e -> {
+                Log.e(TAG, "Error loading participant name: " + e.getMessage());
             });
     }
 }
