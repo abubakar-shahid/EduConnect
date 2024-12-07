@@ -15,6 +15,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +23,7 @@ import java.util.Map;
 public class ProfileActivityStudent extends AppCompatActivity {
 
     private static final String TAG = "ProfileActivity";
-    private TextInputEditText etFullName, etEmail, etPassword, etPhoneNumber, etInstitute, etCity;
+    private TextInputEditText etFullName, etEmail, etPhoneNumber, etInstitute, etCity;
     private AutoCompleteTextView spinnerCountryCode, spinnerCategory, spinnerCountry;
     private Button btnEditSave;
     private boolean isEditing = false;
@@ -58,7 +59,6 @@ public class ProfileActivityStudent extends AppCompatActivity {
     private void initViews() {
         etFullName = findViewById(R.id.et_full_name);
         etEmail = findViewById(R.id.et_email);
-        etPassword = findViewById(R.id.et_password);
         etPhoneNumber = findViewById(R.id.et_phone_number);
         etInstitute = findViewById(R.id.et_institute);
         etCity = findViewById(R.id.et_city);
@@ -85,19 +85,21 @@ public class ProfileActivityStudent extends AppCompatActivity {
     private void loadProfileFromFirestore() {
         String userId = mAuth.getCurrentUser().getUid();
         
-        // First set the email from Firebase Auth
-        if (mAuth.getCurrentUser() != null) {
-            etEmail.setText(mAuth.getCurrentUser().getEmail());
-        }
-
         // Load basic info from users collection first
         db.collection("users").document(userId)
             .get()
             .addOnSuccessListener(userDoc -> {
                 if (userDoc.exists()) {
                     String fullName = userDoc.getString("fullName");
+                    String email = userDoc.getString("email");
                     if (fullName != null && !fullName.isEmpty()) {
                         etFullName.setText(fullName);
+                    }
+                    if (email != null && !email.isEmpty()) {
+                        etEmail.setText(email);
+                    } else {
+                        // Fallback to Firebase Auth email if not in Firestore
+                        etEmail.setText(mAuth.getCurrentUser().getEmail());
                     }
                 }
                 
@@ -149,9 +151,18 @@ public class ProfileActivityStudent extends AppCompatActivity {
     }
 
     private void updateUIWithProfile(DocumentSnapshot document) {
-        // Get values from document
-        String fullName = document.getString("fullName");
+        // Get email from document
         String email = document.getString("email");
+        if (email != null && !email.isEmpty()) {
+            etEmail.setText(email);
+            etEmail.setHint(null);
+        } else {
+            // If no email in Firestore, use Firebase Auth email
+            etEmail.setText(mAuth.getCurrentUser().getEmail());
+            etEmail.setHint(null);
+        }
+
+        // Get values from document for other fields
         String phoneNumber = document.getString("phoneNumber");
         String institute = document.getString("institute");
         String city = document.getString("city");
@@ -160,11 +171,15 @@ public class ProfileActivityStudent extends AppCompatActivity {
         String country = document.getString("country");
 
         // Set values or hints based on whether data exists
-        etFullName.setText(fullName != null && !fullName.isEmpty() ? fullName : "Add your full name");
-        etEmail.setText(email != null && !email.isEmpty() ? email : "Add your email");
+        if (phoneNumber != null && !phoneNumber.isEmpty()) {
+            etPhoneNumber.setText(phoneNumber);
+            etPhoneNumber.setHint(null);
+        } else {
+            etPhoneNumber.setText("");
+            etPhoneNumber.setHint("Add your phone number");
+        }
         
-        etPhoneNumber.setText(phoneNumber != null && !phoneNumber.isEmpty() ? phoneNumber : "");
-        etPhoneNumber.setHint(phoneNumber == null || phoneNumber.isEmpty() ? "Add your phone number" : "");
+        etFullName.setText(document.getString("fullName") != null && !document.getString("fullName").isEmpty() ? document.getString("fullName") : "Add your full name");
         
         etInstitute.setText(institute != null && !institute.isEmpty() ? institute : "");
         etInstitute.setHint(institute == null || institute.isEmpty() ? "Add your institute" : "");
@@ -231,6 +246,15 @@ public class ProfileActivityStudent extends AppCompatActivity {
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(ProfileActivityStudent.this, 
                         "Email updated successfully", Toast.LENGTH_SHORT).show();
+                    
+                    // Update email in users collection
+                    Map<String, Object> userUpdate = new HashMap<>();
+                    userUpdate.put("email", newEmail);
+                    db.collection("users").document(userId)
+                        .set(userUpdate, SetOptions.merge())
+                        .addOnFailureListener(e -> {
+                            Log.e(TAG, "Error updating email in users collection", e);
+                        });
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(ProfileActivityStudent.this,
@@ -315,7 +339,5 @@ public class ProfileActivityStudent extends AppCompatActivity {
         spinnerCountryCode.setEnabled(enabled);
         spinnerCategory.setEnabled(enabled);
         spinnerCountry.setEnabled(enabled);
-        // Only password remains disabled for security
-        etPassword.setEnabled(false);
     }
 }

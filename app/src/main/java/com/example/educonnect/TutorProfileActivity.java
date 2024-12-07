@@ -23,7 +23,7 @@ public class TutorProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "TutorProfileActivity";
 
-    private TextInputEditText etFullName, etEmail, etPassword, etPhoneNumber;
+    private TextInputEditText etFullName, etEmail, etPhoneNumber;
     private TextInputEditText etExpertise1, etExpertise2, etExpertise3, etCity;
     private AutoCompleteTextView spinnerCountryCode, spinnerCountry;
     private Button btnEditSave;
@@ -51,7 +51,6 @@ public class TutorProfileActivity extends AppCompatActivity {
     private void initializeViews() {
         etFullName = findViewById(R.id.et_full_name);
         etEmail = findViewById(R.id.et_email);
-        etPassword = findViewById(R.id.et_password);
         etPhoneNumber = findViewById(R.id.et_phone_number);
         etExpertise1 = findViewById(R.id.et_expertise1);
         etExpertise2 = findViewById(R.id.et_expertise2);
@@ -79,19 +78,21 @@ public class TutorProfileActivity extends AppCompatActivity {
     private void loadTutorProfile() {
         String userId = mAuth.getCurrentUser().getUid();
         
-        // First set the email from Firebase Auth
-        if (mAuth.getCurrentUser() != null) {
-            etEmail.setText(mAuth.getCurrentUser().getEmail());
-        }
-
         // Load basic info from users collection first
         db.collection("users").document(userId)
             .get()
             .addOnSuccessListener(userDoc -> {
                 if (userDoc.exists()) {
                     String fullName = userDoc.getString("fullName");
+                    String email = userDoc.getString("email");
                     if (fullName != null && !fullName.isEmpty()) {
                         etFullName.setText(fullName);
+                    }
+                    if (email != null && !email.isEmpty()) {
+                        etEmail.setText(email);
+                    } else {
+                        // Fallback to Firebase Auth email if not in Firestore
+                        etEmail.setText(mAuth.getCurrentUser().getEmail());
                     }
                 }
                 
@@ -127,7 +128,18 @@ public class TutorProfileActivity extends AppCompatActivity {
     }
 
     private void updateUIWithProfile(DocumentSnapshot document) {
-        // Only update additional fields since name and email are already set
+        // Get email from document
+        String email = document.getString("email");
+        if (email != null && !email.isEmpty()) {
+            etEmail.setText(email);
+            etEmail.setHint(null);
+        } else {
+            // If no email in Firestore, use Firebase Auth email
+            etEmail.setText(mAuth.getCurrentUser().getEmail());
+            etEmail.setHint(null);
+        }
+
+        // Only update additional fields since name is already set
         String phoneNumber = document.getString("phoneNumber");
         String expertise1 = document.getString("expertise1");
         String expertise2 = document.getString("expertise2");
@@ -235,6 +247,15 @@ public class TutorProfileActivity extends AppCompatActivity {
                 .addOnSuccessListener(aVoid -> {
                     Toast.makeText(TutorProfileActivity.this, 
                         "Email updated successfully", Toast.LENGTH_SHORT).show();
+                    
+                    // Update email in users collection
+                    Map<String, Object> userUpdate = new HashMap<>();
+                    userUpdate.put("email", newEmail);
+                    db.collection("users").document(userId)
+                        .set(userUpdate, SetOptions.merge())
+                        .addOnFailureListener(e -> {
+                            Log.e(TAG, "Error updating email in users collection", e);
+                        });
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(TutorProfileActivity.this,
