@@ -45,10 +45,16 @@ public class PostsFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         fabAddPost = view.findViewById(R.id.fab_add_post);
-        fabAddPost.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), AddPostActivity.class);
-            startActivity(intent);
-        });
+        
+        // Hide FAB if user is a tutor
+        if (!(getActivity() instanceof StudentDashboardActivity)) {
+            fabAddPost.setVisibility(View.GONE);
+        } else {
+            fabAddPost.setOnClickListener(v -> {
+                Intent intent = new Intent(getActivity(), AddPostActivity.class);
+                startActivity(intent);
+            });
+        }
 
         // Initialize adapter with empty list
         postAdapter = new PostAdapter(new ArrayList<>(), 
