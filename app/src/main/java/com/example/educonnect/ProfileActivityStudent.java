@@ -222,9 +222,29 @@ public class ProfileActivityStudent extends AppCompatActivity {
         }
 
         String userId = mAuth.getCurrentUser().getUid();
+        String newEmail = etEmail.getText().toString().trim();
+        
+        // Check if email has been changed
+        if (!newEmail.equals(mAuth.getCurrentUser().getEmail())) {
+            // Update email in Firebase Auth
+            mAuth.getCurrentUser().updateEmail(newEmail)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(ProfileActivityStudent.this, 
+                        "Email updated successfully", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(ProfileActivityStudent.this,
+                        "Failed to update email. You may need to re-login: " + e.getMessage(),
+                        Toast.LENGTH_LONG).show();
+                    // Revert the email field to current email
+                    etEmail.setText(mAuth.getCurrentUser().getEmail());
+                    return;
+                });
+        }
+
         Map<String, Object> profile = new HashMap<>();
         profile.put("fullName", etFullName.getText().toString().trim());
-        profile.put("email", etEmail.getText().toString().trim());
+        profile.put("email", newEmail);
         profile.put("phoneNumber", etPhoneNumber.getText().toString().trim());
         profile.put("institute", etInstitute.getText().toString().trim());
         profile.put("city", etCity.getText().toString().trim());
@@ -262,6 +282,15 @@ public class ProfileActivityStudent extends AppCompatActivity {
             etFullName.setError("Name is required");
             return false;
         }
+        String email = etEmail.getText().toString().trim();
+        if (email.isEmpty()) {
+            etEmail.setError("Email is required");
+            return false;
+        }
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            etEmail.setError("Please enter a valid email address");
+            return false;
+        }
         if (etPhoneNumber.getText().toString().trim().isEmpty()) {
             etPhoneNumber.setError("Phone number is required");
             return false;
@@ -279,14 +308,14 @@ public class ProfileActivityStudent extends AppCompatActivity {
 
     private void setFieldsEnabled(boolean enabled) {
         etFullName.setEnabled(enabled);
+        etEmail.setEnabled(enabled);
         etPhoneNumber.setEnabled(enabled);
         etInstitute.setEnabled(enabled);
         etCity.setEnabled(enabled);
         spinnerCountryCode.setEnabled(enabled);
         spinnerCategory.setEnabled(enabled);
         spinnerCountry.setEnabled(enabled);
-        // Email and password fields remain disabled for security
-        etEmail.setEnabled(false);
+        // Only password remains disabled for security
         etPassword.setEnabled(false);
     }
 }

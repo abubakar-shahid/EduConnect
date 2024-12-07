@@ -210,8 +210,8 @@ public class TutorProfileActivity extends AppCompatActivity {
     }
 
     private void setFieldsEnabled(boolean enabled) {
-        // Don't enable email as it's not editable
-        etEmail.setEnabled(false);
+        // Make email editable
+        etEmail.setEnabled(enabled);
         
         // Enable/disable other fields
         etFullName.setEnabled(enabled);
@@ -226,7 +226,27 @@ public class TutorProfileActivity extends AppCompatActivity {
 
     private void saveProfile() {
         String userId = mAuth.getCurrentUser().getUid();
+        String newEmail = etEmail.getText().toString().trim();
         
+        // Check if email has been changed
+        if (!newEmail.equals(mAuth.getCurrentUser().getEmail())) {
+            // Update email in Firebase Auth
+            mAuth.getCurrentUser().updateEmail(newEmail)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(TutorProfileActivity.this, 
+                        "Email updated successfully", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(TutorProfileActivity.this,
+                        "Failed to update email. You may need to re-login: " + e.getMessage(),
+                        Toast.LENGTH_LONG).show();
+                    // Revert the email field to current email
+                    etEmail.setText(mAuth.getCurrentUser().getEmail());
+                    return;
+                });
+        }
+
+        // Continue with rest of profile update...
         Map<String, Object> profile = new HashMap<>();
         // Only save non-empty values
         String fullName = etFullName.getText().toString().trim();
