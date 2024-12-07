@@ -13,9 +13,15 @@ import java.util.Locale;
 
 public class ProposalAdapter extends RecyclerView.Adapter<ProposalAdapter.ProposalViewHolder> {
     private List<Proposal> proposals;
+    private OnProposalClickListener listener;
 
-    public ProposalAdapter(List<Proposal> proposals) {
+    public interface OnProposalClickListener {
+        void onProposalClick(Proposal proposal);
+    }
+
+    public ProposalAdapter(List<Proposal> proposals, OnProposalClickListener listener) {
         this.proposals = proposals;
+        this.listener = listener;
     }
 
     @NonNull
@@ -36,7 +42,7 @@ public class ProposalAdapter extends RecyclerView.Adapter<ProposalAdapter.Propos
         return proposals.size();
     }
 
-    static class ProposalViewHolder extends RecyclerView.ViewHolder {
+    class ProposalViewHolder extends RecyclerView.ViewHolder {
         TextView tutorNameText, proposalText, amountText, dateText;
 
         public ProposalViewHolder(@NonNull View itemView) {
@@ -55,6 +61,12 @@ public class ProposalAdapter extends RecyclerView.Adapter<ProposalAdapter.Propos
             SimpleDateFormat sdf = new SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.getDefault());
             String date = sdf.format(new Date(proposal.getTimestamp()));
             dateText.setText(date);
+            
+            itemView.setOnClickListener(v -> {
+                if (ProposalAdapter.this.listener != null) {
+                    ProposalAdapter.this.listener.onProposalClick(proposal);
+                }
+            });
         }
     }
 } 

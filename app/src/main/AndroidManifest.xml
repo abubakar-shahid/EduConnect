@@ -30,6 +30,7 @@
             android:windowSoftInputMode="adjustResize" />
         <activity android:name=".ChatActivity" />
         <activity android:name=".TutorProfileActivity" />
+        <activity android:name=".ProposalDetailsActivity" android:exported="false"/>
         
     </application>
 

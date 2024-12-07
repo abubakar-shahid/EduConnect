@@ -155,10 +155,10 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
                 );
 
                 // Get tutor's name from Firestore
-                db.collection("tutors").document(tutorId).get()
+                db.collection("users").document(tutorId).get()
                     .addOnSuccessListener(documentSnapshot -> {
                         if (documentSnapshot.exists()) {
-                            String tutorName = documentSnapshot.getString("name");
+                            String tutorName = documentSnapshot.getString("fullName");
                             proposal.setTutorName(tutorName);
 
                             // Save proposal to Firebase Realtime Database
@@ -196,7 +196,16 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
             
             recyclerView.setLayoutManager(new LinearLayoutManager(itemView.getContext()));
             List<Proposal> proposalsList = new ArrayList<>();
-            ProposalAdapter proposalAdapter = new ProposalAdapter(proposalsList);
+            ProposalAdapter proposalAdapter = new ProposalAdapter(proposalsList, proposal -> {
+                // Handle proposal click
+                Intent intent = new Intent(itemView.getContext(), ProposalDetailsActivity.class);
+                intent.putExtra("tutor_id", proposal.getTutorId());
+                intent.putExtra("message", proposal.getMessage());
+                intent.putExtra("price", proposal.getPrice());
+                intent.putExtra("timestamp", proposal.getTimestamp());
+                itemView.getContext().startActivity(intent);
+                dialog.dismiss();
+            });
             recyclerView.setAdapter(proposalAdapter);
 
             // Fetch proposals from Firebase Realtime Database
