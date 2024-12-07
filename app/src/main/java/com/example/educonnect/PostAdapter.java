@@ -12,14 +12,19 @@ import android.view.Gravity;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
 
@@ -181,7 +186,54 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
         }
 
         private void showProposalsDialog(String postId) {
-            // TODO: Implement proposals dialog display logic
+            Dialog dialog = new Dialog(itemView.getContext());
+            dialog.setContentView(R.layout.layout_proposals_dialog);
+            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            dialog.getWindow().setGravity(Gravity.CENTER);
+
+            RecyclerView recyclerView = dialog.findViewById(R.id.proposals_recycler_view);
+            TextView noProposalsText = dialog.findViewById(R.id.no_proposals_text);
+            
+            recyclerView.setLayoutManager(new LinearLayoutManager(itemView.getContext()));
+            List<Proposal> proposalsList = new ArrayList<>();
+            ProposalAdapter proposalAdapter = new ProposalAdapter(proposalsList);
+            recyclerView.setAdapter(proposalAdapter);
+
+            // Fetch proposals from Firebase Realtime Database
+            realTimeDb.getReference("proposals")
+                .orderByChild("postId")
+                .equalTo(postId)
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        proposalsList.clear();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            Proposal proposal = snapshot.getValue(Proposal.class);
+                            if (proposal != null) {
+                                proposalsList.add(proposal);
+                            }
+                        }
+                        
+                        if (proposalsList.isEmpty()) {
+                            noProposalsText.setVisibility(View.VISIBLE);
+                            recyclerView.setVisibility(View.GONE);
+                        } else {
+                            noProposalsText.setVisibility(View.GONE);
+                            recyclerView.setVisibility(View.VISIBLE);
+                        }
+                        
+                        proposalAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        Toast.makeText(itemView.getContext(), 
+                            "Error loading proposals: " + databaseError.getMessage(), 
+                            Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+            dialog.show();
         }
     }
 }
