@@ -44,13 +44,14 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
     }
 
     class ChatViewHolder extends RecyclerView.ViewHolder {
-        TextView nameTextView, lastMessageTextView, timeTextView;
+        TextView nameTextView, lastMessageTextView, timeTextView, unreadCountView;
 
         public ChatViewHolder(@NonNull View itemView) {
             super(itemView);
             nameTextView = itemView.findViewById(R.id.chat_name);
             lastMessageTextView = itemView.findViewById(R.id.chat_last_message);
             timeTextView = itemView.findViewById(R.id.chat_time);
+            unreadCountView = itemView.findViewById(R.id.unread_count);
 
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
@@ -67,6 +68,14 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
             String time = sdf.format(new Date(chat.getLastMessageTime()));
             timeTextView.setText(time);
+
+            // Show unread count if there are unread messages
+            if (chat.getUnreadCount() > 0) {
+                unreadCountView.setVisibility(View.VISIBLE);
+                unreadCountView.setText(String.valueOf(chat.getUnreadCount()));
+            } else {
+                unreadCountView.setVisibility(View.GONE);
+            }
         }
     }
 }

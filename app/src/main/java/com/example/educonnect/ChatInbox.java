@@ -6,6 +6,7 @@ public class ChatInbox {
     private long lastMessageTime;
     private String participantId; // The other user's ID
     private String participantName; // The other user's name
+    private int unreadCount; // Add this field
 
     public ChatInbox() {} // Required for Firebase
 
@@ -16,6 +17,7 @@ public class ChatInbox {
         this.lastMessageTime = lastMessageTime;
         this.participantId = participantId;
         this.participantName = participantName;
+        this.unreadCount = 1; // New messages start with count 1
     }
 
     // Getters and Setters
@@ -29,4 +31,6 @@ public class ChatInbox {
     public void setParticipantId(String participantId) { this.participantId = participantId; }
     public String getParticipantName() { return participantName; }
     public void setParticipantName(String participantName) { this.participantName = participantName; }
+    public int getUnreadCount() { return unreadCount; }
+    public void setUnreadCount(int unreadCount) { this.unreadCount = unreadCount; }
 } 

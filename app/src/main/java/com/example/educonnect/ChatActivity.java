@@ -58,6 +58,17 @@ public class ChatActivity extends AppCompatActivity {
         sendButton.setOnClickListener(v -> sendMessage());
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Mark messages as read when chat is opened
+        database.getReference("chat_inbox")
+            .child(currentUserId)
+            .child(chatId)
+            .child("unreadCount")
+            .setValue(0);
+    }
+
     private void loadMessages() {
         database.getReference("chats").child(chatId).child("messages")
             .addChildEventListener(new ChildEventListener() {
@@ -110,16 +121,27 @@ public class ChatActivity extends AppCompatActivity {
         // Update current user's inbox
         ChatInbox currentUserInbox = new ChatInbox(chatId, lastMessage, timestamp, 
             otherUserId, otherUserName);
+        currentUserInbox.setUnreadCount(0); // No unread messages for sender
         database.getReference("chat_inbox").child(currentUserId).child(chatId)
             .setValue(currentUserInbox);
 
-        // Get current user's name and update other user's inbox
-        FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
-        database.getReference("users").child(currentUserId).child("fullName")
-            .get().addOnSuccessListener(snapshot -> {
-                String currentUserName = snapshot.getValue(String.class);
+        // Update other user's inbox
+        database.getReference("chat_inbox")
+            .child(otherUserId)
+            .child(chatId)
+            .get()
+            .addOnSuccessListener(snapshot -> {
+                int currentUnreadCount = 0;
+                if (snapshot.exists()) {
+                    ChatInbox existingInbox = snapshot.getValue(ChatInbox.class);
+                    if (existingInbox != null) {
+                        currentUnreadCount = existingInbox.getUnreadCount();
+                    }
+                }
+                
                 ChatInbox otherUserInbox = new ChatInbox(chatId, lastMessage, timestamp, 
-                    currentUserId, currentUserName);
+                    currentUserId, FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+                otherUserInbox.setUnreadCount(currentUnreadCount + 1);
                 database.getReference("chat_inbox").child(otherUserId).child(chatId)
                     .setValue(otherUserInbox);
             });
