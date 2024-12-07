@@ -35,7 +35,7 @@ public class ChatsFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         chatList = new ArrayList<>();
         
-        chatAdapter = new ChatAdapter(chatList, chat -> {
+        chatAdapter = new ChatAdapter(chatList,  chat -> {
             Intent intent = new Intent(getActivity(), ChatActivity.class);
             intent.putExtra("other_user_id", chat.getParticipantId());
             intent.putExtra("other_user_name", chat.getParticipantName());

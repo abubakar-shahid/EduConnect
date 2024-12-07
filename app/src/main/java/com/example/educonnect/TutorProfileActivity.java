@@ -229,6 +229,7 @@ public class TutorProfileActivity extends AppCompatActivity {
         
         Map<String, Object> profile = new HashMap<>();
         // Only save non-empty values
+        String fullName = etFullName.getText().toString().trim();
         String phoneNumber = etPhoneNumber.getText().toString().trim();
         String expertise1 = etExpertise1.getText().toString().trim();
         String expertise2 = etExpertise2.getText().toString().trim();
@@ -237,6 +238,8 @@ public class TutorProfileActivity extends AppCompatActivity {
         String countryCode = spinnerCountryCode.getText().toString().trim();
         String country = spinnerCountry.getText().toString().trim();
 
+        // Add fullName to profile map
+        if (!fullName.isEmpty()) profile.put("fullName", fullName);
         if (!phoneNumber.isEmpty()) profile.put("phoneNumber", phoneNumber);
         if (!expertise1.isEmpty()) profile.put("expertise1", expertise1);
         if (!expertise2.isEmpty()) profile.put("expertise2", expertise2);
@@ -247,6 +250,19 @@ public class TutorProfileActivity extends AppCompatActivity {
         
         profile.put("updatedAt", java.util.Calendar.getInstance().getTime());
 
+        // First update the users collection with the fullName
+        if (!fullName.isEmpty()) {
+            Map<String, Object> userUpdate = new HashMap<>();
+            userUpdate.put("fullName", fullName);
+            
+            db.collection("users").document(userId)
+                .set(userUpdate, SetOptions.merge())
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error updating user's fullName", e);
+                });
+        }
+
+        // Then update the tutors collection with all profile data
         db.collection("tutors").document(userId)
                 .set(profile, SetOptions.merge())  // Use merge to preserve existing fields
                 .addOnSuccessListener(aVoid -> {
